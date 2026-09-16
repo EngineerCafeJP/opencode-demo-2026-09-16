@@ -1,4 +1,4 @@
-# LIMITATIONS — 未検証・制約・範囲外
+# LIMITATIONS — 未検証・制約・範囲外（R3）
 
 この教材で**主張しないこと**と、未検証・持越しの項目を正直に列挙します。
 
@@ -9,18 +9,21 @@
 - ガードは「demo_publishツール経由の公開」を止める教材機構です。他経路（直接ファイル書込み等）を防ぐ汎用セキュリティ機構ではありません
 - 定員10名・409拒否は教材アプリの契約であり、実在サービスの仕様ではありません
 - 「より安全」「世界初」等の優位性は主張しません
-- stub-local/stub-demo は**決定論的スタブ**です。「実モデルが修復した」証拠にはなりません — 実モデル修復は `evidence/runs/C-2026-09-16_02-02-27/`（gemma4:31b）に分離記録
+- stub-local/stub-demo は**決定論的スタブ**です。「実モデルが修復した」証拠にはなりません
+- 実モデル修復run `C-2026-09-16_02-02-27`（gemma4:31b）の正確な説明は「実モデルで修正・再検査し、その後の模擬公開は別の固定応答セッション(stub)で実行した」です。**一つの実モデルが全工程を完遂した記録ではありません**。モデル自体の再実行も行っていません
 
 ## 検証したが限界があるもの
 
 | 項目 | 実測 | 限界 |
 |---|---|---|
-| A〜D挙動 | R2 run群 4/4 scenario_match=PASS | 単一端末(macOS arm64)上のローカル検証のみ。他OS・他端末未検証 |
-| ガード遮断 | tool.execute.before で実遮断・receipt無し・合成異常系10件blocked | OpenCode本体の他の実行経路（TUI直接操作等）での網羅的遮断は未検証。serve API経路で確認 |
-| 外側検証 | 実CLI verify が証拠改竄/欠落/不一致で exit=1 | 検証器自身の欠陥は不完全性定理の範囲 — 合成異常系での挙動確認に留まる |
-| 環境分離 | 子プロセスは12変数allowlist・合成マーカー漏洩なし | doctorのbaseline比較は `trusted/baseline/existing-config.json` 依存。baseline欠落時はUNKNOWN（合格とは言わない） |
-| 実モデル修復 | gemma4:31b がcheck→edit→再checkで409へ収束 | 1回の成功であり再現性は非保証。小モデル(gemma4:e2b)は未収束の記録あり。決定的修復 `democtl fix` が反復用の正規経路 |
-| 撮影 | 12場面すべて実撮影・目視 | 撮影者（エージェント）自身の点検。人間の講師による最終レビューは **PENDING** |
+| A〜D挙動 | R3 run群 07-08-06 で 4/4 scenario_match=PASS・別系統run-stage群(06-34〜06-35)も4/4 | 単一端末(macOS arm64)上のローカル検証のみ。他OS・他端末未検証 |
+| 証拠同一性 | run/session/call/検査器/ガード/ツールのhash・束縛を照合（M1/M2/M3/M4a/M4b全てFAIL検出） | 変異は既知のパターンでの検証。想定外の改竄経路の網羅性は非保証 |
+| ガード遮断 | tool.execute.before で実遮断・receipt無し・合成異常系10件blocked・検査器identity不一致も遮断 | OpenCode本体の他の実行経路（TUI直接操作等）での網羅的遮断は未検証。serve API経路で確認 |
+| 外側検証 | 実CLI verify が証拠改竄/欠落/不一致/exit≠0で exit=1 | 検証器自身の欠陥は不完全性定理の範囲 — 合成異常系での挙動確認に留まる |
+| 環境分離 | 子プロセスはallowlist・**実spawn子プロセスが報告するenv**で合成マーカー漏洩なし・ブラウザ起動もenv明示 | doctorのbaseline比較は `trusted/baseline/existing-config.json` 依存（欠落時はUNKNOWN）。Terminal窓内シェルはdeny変数の**有無のみ**起動時点検（値は記録しない・SSH_AUTH_SOCKはGUIセッション由来で対象外） |
+| 停止の所有確認 | exe絶対パス+run_dir(argv/cwd)+lstart の3点照合。別プロジェクトの待機プロセスは旧/新形式とも skip（M5実測） | 旧形式（owner/run_dir未記録のinfo）のプロセスは識別不能のため一律スキップ＝止められない場合がある |
+| 実モデル修復 | gemma4:31b がcheck→edit×4→再check×5で409へ収束 | 1回の成功であり再現性は非保証。小モデル(gemma4:e2b)は未収束の記録あり。決定的修復 `democtl fix` が反復用の正規経路 |
+| 撮影 | 12場面すべて実撮影・目視・場面成立条件の実測ゲート付き | 撮影者（エージェント）自身の点検。人間の講師による最終レビューは **PENDING** |
 | Web UI表示 | 公式Web UIで実測値を表示（SHOT-05/06/09/11） | 汎用ツールの生出力欄は公式UIに存在しないため、モデル応答テキストへの実測エコーで表示。ツール実行自体は実呼出し |
 
 ## 未検証 / BLOCKED
@@ -32,15 +35,16 @@
 | LIM-03 | 外部モデルAPI経由の実演 | 未使用（意図的） | APIキー非使用方針。Ollamaローカルモデル＋決定的スタブで代替済み |
 | LIM-04 | 講師（人間）による最終レビュー | PENDING | エージェント点検済みだが、プレゼンター目視は未実施 |
 | LIM-05 | 動画クリップ（assets/clips） | 未制作 | 静止画12場面で仕様充足。clips/は空のまま |
+| LIM-06 | Playwright要求ブラウザrev(1200)未キャッシュ | 回避済 | ダウンロード経路が不安定だったため、キャッシュ済み `chromium_headless_shell-1228` へ executablePath フォールバックで実行。他端末では `npx playwright install` が必要な場合あり |
 
 ## 環境依存
 
 - 画面収録・Terminal自動化は本端末のTCC権限に依存（別端末では権限再付与が必要）
 - Ollamaモデルは本端末ローカル依存（無ければ stub-local で全工程動作）
-- `bin/opencode`・Playwrightブラウザは納品ツリーに**含めない**。同一端末ではDEMO_ROOT側の専用インストールを使用
+- `bin/opencode`・Playwrightブラウザは納品ツリーに**含めない**。同一端末ではDEMO_ROOT側の専用インストール/共有キャッシュを使用
 
 ## 既知の実装上の注意
 
-- runは上書きせず新規作成（時刻+接尾辞で一意・既存IDは拒否）。`./democtl stop` はserve-info/app-info/stub-infoのPID+argv身元照合で個別停止（他プロセスは殺さない）
+- runは上書きせず新規作成（時刻+接尾辞で一意・既存IDは拒否）。`./democtl stop` はserve-info/app-info/stub-infoの **exe絶対パス+run_dir+起動時刻(lstart)** 照合で個別停止（所有不明・別プロジェクトのプロセスは殺さない）
 - workspaceは強制resetしない（修復途中のまま残る場合はRUNBOOK§5参照）
 - D（ガード未接続）を最終状態にしない。実演後は `./democtl recovery`（B拒否/C許可の再検証）で接続状態へ戻す

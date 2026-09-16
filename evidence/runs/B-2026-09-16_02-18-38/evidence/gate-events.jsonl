@@ -1,2 +1,0 @@
-{"gate":"demo-gate","at":"2026-09-16T02:18:44.541Z","phase":"start","attempt":"1789525124541","tool":"demo_publish","session_id":"ses_f57fd9d53ffe5SvuD972X2Et1S","call_id":"call_40dhuiu1"}
-{"gate":"demo-gate","at":"2026-09-16T02:18:45.167Z","phase":"decision","attempt":"1789525124541","decision":"blocked","reason":"ACCEPTANCE_FAIL: 受入検査が合格でない","acceptance_path":"<DEMO_ROOT>/runs/B-2026-09-16_02-18-38/evidence/acceptance-gate-1789525124541.json","acceptance_exit":3,"candidate_sha256":"667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e"}

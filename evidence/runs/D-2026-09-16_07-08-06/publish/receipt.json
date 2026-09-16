@@ -1,0 +1,12 @@
+{
+  "tool": "demo_publish",
+  "kind": "local-mock-publish-receipt",
+  "run_id": "D-2026-09-16_07-08-06",
+  "candidate_sha256": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+  "manifest_sha256": "16c960ba77421da11b53e785f359b73f328a86118b48feb4af143db5d9afb198",
+  "session_id": "ses_f56f3c54bffesim83CRsaZ44oH",
+  "call_id": "call_j1cthwjc",
+  "published_at": "2026-09-16T07:09:11.882Z",
+  "note": "shot-11",
+  "disclaimer": "教材用のローカル記録。実サービスへの公開ではない。"
+}

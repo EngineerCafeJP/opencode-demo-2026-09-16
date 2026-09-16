@@ -1,0 +1,7 @@
+{
+  "name": "registration-demo-candidate",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "description": "講義用の合成申込アプリ（教材）。実サービスではない。"
+}

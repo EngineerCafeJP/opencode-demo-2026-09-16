@@ -2,7 +2,7 @@
   "document_kind": "measurement",
   "schema_version": 1,
   "status": "VERIFIED",
-  "recorded_at": "2026-09-16T05:27:02.786Z",
+  "recorded_at": "2026-09-16T07:30:00.000Z",
   "opencode": {
     "upstream_url": "https://github.com/anomalyco/opencode",
     "tag": "v1.18.31",
@@ -23,34 +23,39 @@
     "managed_policy_checked": "N/A (組織管理ポリシー非適用の個人端末)",
     "existing_aidd_changed": false,
     "existing_aidd_evidence": "~/.config/opencode baseline manifest比較: 1138ファイル同一（trusted/baseline/existing-config.json とのsha256照合・mtime表示ではない）",
-    "child_env_allowlist": "doctorが合成マーカー4個を注入して漏洩なしを実測（12 vars allowlisted）"
+    "child_env_allowlist": "doctorが合成マーカー4個を注入し、実spawnした子プロセス(envコマンド)が報告する環境で漏洩なしを実測（5 kind × 4 sentinels）。ブラウザ起動もenv明示（chromium.launch env指定）"
   },
   "model": {
     "provider_id": "ollama-local / stub-local",
     "model_default": "ollama-local/gemma4:e2b（既定メタ。実使用はsession証拠のmodel欄を参照）",
     "models_used_in_evidence": [
       "stub-local/stub-demo（撮影・反復デモの全session）",
-      "ollama-local/gemma4:31b（実モデル修復: evidence/runs/C-2026-09-16_02-02-27）",
+      "ollama-local/gemma4:31b（実モデル修復: evidence/runs/C-2026-09-16_02-02-27 — 修正・再検査まで実セッション。模擬公開は別stubセッション）",
       "ollama-local/gemma4:e2b（同run内の未収束試行）"
     ],
     "credential_reference_name_only": null,
     "usage_approval_reference": "外部送信なし。ローカルモデル/スタブのみ"
   },
   "dependencies": {
-    "lockfile_sha256": null,
+    "lockfile_sha256": "cdf7116785c3d2e0fdcadc99269703938a402ab57e854816fd0a872f4eb6134d",
+    "lockfile_path": "trusted/capture/package-lock.json",
     "plugin_package_version": "opencode同梱 @opencode-ai/plugin (file plugin: export default {id, server})",
-    "playwright_version": "1.57.x (trusted/capture ローカルinstall)",
-    "browser_version": "Chromium 143.0.7499.4 (playwright build 1200, private-runtime/pw-browsers)"
+    "playwright_version": "1.57.0 (package-lock.json)",
+    "browser_version": "要求rev=chromium_headless_shell-1200 未キャッシュのため実行時はキャッシュ済み chromium_headless_shell-1228 へ executablePath フォールバック（LIMITATIONS LIM-06）"
   },
   "artifacts": {
     "broken_source_sha256": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
     "fixed_source_sha256": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
     "acceptance_sha256": "82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828",
-    "guard_sha256": "182cd88918e70dd1b3759d64fc4a6fd699d9d9ca8bd7d1d09c55d5d1299d9b13",
+    "guard_sha256": "e8e0e244dd2a8605d81958b46e6c2a1ce7e5ed6323705759af986f41e2973691",
+    "guard_test_sha256": "22888380e3ea204c7ea1df7bf9860b4858519aef511235393bcaaac1dc20768a",
     "publish_tool_sha256": "b89697f13df0ed0de792a96866c6d7f9dcfcbf9651c007ce7e2a888e5215795e",
     "check_tool_sha256": "d309c4d4dd5f16ca98640874b259567472a46eefb1ee7f00d55829c51dd357cc",
     "stub_llm_sha256": "9cdd47fe856a82e0bb415a6e2580155c33d4fe391acf8c009d4fe4708016c5f5",
-    "verify_core_sha256": "cbca7260abbb265c095cb0fadcb1cb203b13887d1a1399de3a854448f34be049"
+    "verify_core_sha256": "77f20b183b423f394c3cd143732ed118dcd19699ab53bc2593b4c9456931ba45",
+    "democtl_sha256": "4597c7ca17a662be5225a56aaa6035739a372d7a297279e3caa7793e2b4210d9",
+    "capture_sha256": "8713420be7b965909f46b36de8a28272ecb60eb0d6c1ccc95f6dcc4aba441637",
+    "term_shot_sha256": "59216584df117ab4f812bcac799bb796481e04e80516c69cfe1e855c470b72ca"
   },
   "capture": {
     "browser_viewport": {
@@ -59,12 +64,18 @@
     },
     "device_scale_factor": 1,
     "opencode_ui_kind": "official web UI served by fixed opencode serve (route /server/<b64>/session/<id>)",
-    "terminal_capture_method": "Terminal.app実窓 + screencapture -l<CGWindowID> (optionAll列挙)"
+    "terminal_capture_method": "Terminal.app実窓 + screencapture -l<CGWindowID> (optionAll列挙) — Terminal内シェルのdeny変数有無を起動時点検（値は記録しない）",
+    "screenshot_runs": {
+      "A": "A-2026-09-16_07-08-06",
+      "B": "B-2026-09-16_07-08-06",
+      "C": "C-2026-09-16_07-08-06",
+      "D": "D-2026-09-16_07-08-06"
+    }
   },
   "verification": {
-    "last_verified_at": "2026-09-16T05:27:02.787Z",
+    "last_verified_at": "2026-09-16T07:30:00.000Z",
     "test_report_path": "docs/TEST_REPORT.md",
     "presenter_review": "PENDING",
-    "note": "R2: F01-F10対応版。guard厳格化(15/15)・verify-core共有化(実CLI exit≠0)・子環境allowlist・fault注入10件blocked+陽性allowed・撮影run4/4 scenario PASS・recovery検証済み"
+    "note": "R3: R2検収残存5項目対応版。証拠同一性照合(run/session/call/検査器/ガード/ツール)・exit≠0の文書無効化・所有照合stop(別プロジェクト非停止)・ブラウザenv明示・explain条件付き表示。guard内部16/16・fault注入11/11・変異再検証10/10・撮影run4/4 scenario PASS・recovery検証済み"
   }
 }

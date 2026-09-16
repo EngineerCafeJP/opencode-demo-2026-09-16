@@ -1,0 +1,25 @@
+{
+  "procs": [
+    {
+      "pid": 55342,
+      "port": 57356,
+      "profile": "on",
+      "started_at": "2026-09-16T06:35:18.253Z",
+      "owner": {
+        "exe": "<DEMO_ROOT>/bin/opencode",
+        "run_dir": "<DEMO_ROOT>/runs/B-2026-09-16_06-35-17",
+        "lstart": "Wed Sep 16 15:35:17 2026"
+      }
+    }
+  ],
+  "pid": 55342,
+  "port": 57356,
+  "profile": "on",
+  "url": "http://127.0.0.1:57356",
+  "started_at": "2026-09-16T06:35:18.249Z",
+  "owner": {
+    "exe": "<DEMO_ROOT>/bin/opencode",
+    "run_dir": "<DEMO_ROOT>/runs/B-2026-09-16_06-35-17",
+    "lstart": "Wed Sep 16 15:35:17 2026"
+  }
+}

@@ -1,12 +1,12 @@
 # RUNBOOK — 実装後の正確なコマンドとプロンプト
 
 DEMO_ROOT = `<DEMO_ROOT>`（実機ではこの直下で実行）。
-この納品ツリー内のコントローラは `source/democtl`（実機の `./source/democtl` と同一物）。
+この納品ツリー内のコントローラは `source/democtl`（実機の `./democtl` と同一物）。
 
 ## 0. 起動前確認
 
 ```bash
-./source/democtl doctor
+./democtl doctor
 ```
 
 固定版バージョン・バイナリhash**期待値照合**・node・ポート空き・Ollama・既存 `~/.config/opencode`
@@ -17,42 +17,42 @@ stubプロバイダ（撮影・反復で既定）は `run-stage` が必要時に
 手動管理:
 
 ```bash
-./source/democtl stub start     # 127.0.0.1:4531 に決定的応答サーバ（所有権記録）
-./source/democtl stub status    # health/所有権確認
-./source/democtl stub stop      # 自分が起動したstubのみ停止
+./democtl stub start     # 127.0.0.1:4531 に決定的応答サーバ（所有権記録）
+./democtl stub status    # health/所有権確認
+./democtl stub stop      # 自分が起動したstubのみ停止
 ```
 
 ## 1. 一括実行（各状態の新規run）
 
 ```bash
-./source/democtl run-stage A    # broken: 単体PASS・受入FAIL(10→11)・demo_check経由（ガード未接続）
-./source/democtl run-stage B    # broken + ガード接続: demo_publish が hook で遮断
-./source/democtl run-stage C    # broken→修復→snapshot固定: 同一検査PASS→許可→receipt
-./source/democtl run-stage D    # broken + ガード未接続: demo_publish 実行→receipt→外側FAIL検出→recovery検証
+./democtl run-stage A    # broken: 単体PASS・受入FAIL(10→11)・demo_check経由（ガード未接続）
+./democtl run-stage B    # broken + ガード接続: demo_publish が hook で遮断
+./democtl run-stage C    # broken→修復→snapshot固定: 同一検査PASS→許可→receipt
+./democtl run-stage D    # broken + ガード未接続: demo_publish 実行→receipt→外側FAIL検出→recovery検証
 ```
 
-既定は stub-local プロバイダ。実モデルで修復を試す場合: `./source/democtl run-stage C --model-repair --provider ollama-local --model gemma4:31b`
+既定は stub-local プロバイダ。実モデルで修復を試す場合: `./democtl run-stage C --model-repair --provider ollama-local --model gemma4:31b`
 
 ## 2. 個別操作（実演で細かく見せる場合）
 
 ```bash
-./source/democtl prepare A                          # 新規run作成（既存IDは拒否・candidate=broken固定コピー）
-./source/democtl unit <run>                         # 候補の単体テスト（SHOT-01相当）
-./source/democtl app <run> --fixture empty-seat     # 実アプリ起動・URL表示（SHOT-02）
-./source/democtl app <run> --fixture full           # 満席subrun（SHOT-03/04/08）
-./source/democtl check <run>                        # 受入検査を直接実行
-./source/democtl serve <run> --profile on           # 実OpenCode serve起動（ガード接続）
-./source/democtl prompt <run> --text "..."          # 実セッション駆動
-./source/democtl snapshot <run>                     # workspace→candidate固定（C）
-./source/democtl fix <run>                          # 提示者適用の確定的修復（workspaceへ）
-./source/democtl guard-test                         # ガード内部テスト15件（SHOT-10）
-./source/democtl verify <run>                       # 外側実経路検証（SHOT-12・exit≠0で失敗）
-./source/democtl explain <run>                      # 実測から2段要約を表示（SHOT-12素材）
-./source/democtl recovery                           # D後: ガード再接続でB拒否・C許可を検証
-./source/democtl stop [run]                         # 起動プロセス停止（所有権照合・PID記録から）
+./democtl prepare A                          # 新規run作成（既存IDは拒否・candidate=broken固定コピー）
+./democtl unit <run>                         # 候補の単体テスト（SHOT-01相当）
+./democtl app <run> --fixture empty-seat     # 実アプリ起動・URL表示（SHOT-02）
+./democtl app <run> --fixture full           # 満席subrun（SHOT-03/04/08）
+./democtl check <run>                        # 受入検査を直接実行
+./democtl serve <run> --profile on           # 実OpenCode serve起動（ガード接続）
+./democtl prompt <run> --text "..."          # 実セッション駆動
+./democtl snapshot <run>                     # workspace→candidate固定（C）
+./democtl fix <run>                          # 提示者適用の確定的修復（workspaceへ）
+./democtl guard-test                         # ガード内部テスト16件（SHOT-10）
+./democtl verify <run>                       # 外側実経路検証（SHOT-12・exit≠0で失敗）
+./democtl explain <run>                      # 実測から2段要約を表示（SHOT-12素材）
+./democtl recovery                           # D後: ガード再接続でB拒否・C許可を検証
+./democtl stop [run]                         # 起動プロセス停止（所有権照合・PID記録から）
 ```
 
-検査不能の実証: `./source/democtl serve <run> --profile on --inspector trusted/fault-injection/always-error-acceptance.ts` で常時ERRORの合成検査器に差し替え、実hook経路で遮断されることを確認（runs/B-2026-09-16_05-01-37 の記録あり）。
+検査不能の実証: `./democtl serve <run> --profile on --inspector trusted/fault-injection/always-error-acceptance.ts` で常時ERRORの合成検査器に差し替え、実hook経路で遮断されることを確認（runs/B-2026-09-16_06-36-34/evidence/inspector-down.json の記録あり）。
 
 合成異常系スイート: `node trusted/fault-injection/probes.mjs --out verification/r2-fixed --expect fixed`
 
@@ -90,7 +90,7 @@ stubプロバイダ（撮影・反復で既定）は `run-stage` が必要時に
 ## 4. OpenCode Web UI で見る場合
 
 ```bash
-./source/democtl serve <run> --profile on    # serve-info.json に url が出る
+./democtl serve <run> --profile on    # serve-info.json に url が出る
 # ブラウザで http://127.0.0.1:<port> を開く → 対象directoryのセッション一覧
 ```
 
@@ -101,12 +101,12 @@ stubプロバイダ（撮影・反復で既定）は `run-stage` が必要時に
 
 | 状況 | 手順 |
 |---|---|
-| serve/app/stubプロセスが残る | `./source/democtl stop`（全run分をserve-info/app-info/stub-infoのPID+argv身元照合で個別SIGTERM。所有プロセスのみ）|
-| ポート衝突 | `lsof -iTCP:<port> -sTCP:LISTEN -t` でPID確認→該当のみkill。`./source/democtl doctor` で4530/4531再確認 |
-| 状態をやり直す | `./source/democtl prepare <A-D>` で**新規run**（runは上書きしない・同一IDは拒否・workspaceは強制resetしない）|
-| workspaceが修復途中のまま | `./source/democtl fix <run>` で versions/fixed/app を適用、または versions/broken を `cp -r` で戻す |
-| Dの後に戻す | `./source/democtl recovery`（ガード再接続でbroken拒否・fixed許可を検証）。Dを最終状態にしない |
-| stub停止 | `./source/democtl stub stop`（所有権記録がある場合のみ） |
+| serve/app/stubプロセスが残る | `./democtl stop`（全run分をserve-info/app-info/stub-infoのPID+argv身元照合で個別SIGTERM。所有プロセスのみ）|
+| ポート衝突 | `lsof -iTCP:<port> -sTCP:LISTEN -t` でPID確認→該当のみkill。`./democtl doctor` で4530/4531再確認 |
+| 状態をやり直す | `./democtl prepare <A-D>` で**新規run**（runは上書きしない・同一IDは拒否・workspaceは強制resetしない）|
+| workspaceが修復途中のまま | `./democtl fix <run>` で versions/fixed/app を適用、または versions/broken を `cp -r` で戻す |
+| Dの後に戻す | `./democtl recovery`（ガード再接続でbroken拒否・fixed許可を検証）。Dを最終状態にしない |
+| stub停止 | `./democtl stub stop`（所有権記録がある場合のみ） |
 | Terminal窓が残る | `osascript -e 'tell application "Terminal" to close (every window whose name contains "DEMOSHOT")'` |
 
 ## 6. 禁止事項（講師側でも）

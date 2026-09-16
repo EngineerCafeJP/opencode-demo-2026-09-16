@@ -29,41 +29,41 @@
 
 <h2>状態 A — テストは緑。でも、定員を超えた</h2>
 <div class="grid">
-  <div class="card"><img src="slide-ready/SHOT-01_unit-tests-pass.png"><h3>SHOT-01 部品のテストは、全部通った</h3><p>broken候補の判定関数テスト 4/4合格（実端末）</p><a href="../evidence/runs/A-2026-09-16_05-10-19/evidence/launch-manifest.json">launch-manifest</a> ・ <a href="../evidence/runs/A-2026-09-16_05-10-19/evidence/outer-verification.json">outer-verification</a></div>
-  <div class="card"><img src="slide-ready/SHOT-02_register-9-to-10.png"><h3>SHOT-02 空席があれば、申し込める</h3><p>9名→受付成功・保存人数10（実ブラウザ操作）</p><a href="../evidence/runs/A-2026-09-16_05-10-19/app-info.json">app-info</a></div>
-  <div class="card"><img src="slide-ready/SHOT-03_full-before-click.png"><h3>SHOT-03 では、満席から申し込むと？</h3><p>新subrunで10/10復元・結果は未実施</p><a href="../evidence/runs/A-2026-09-16_05-10-19/app-info.json">app-info</a></div>
-  <div class="card"><img src="slide-ready/SHOT-04_over-capacity.png"><h3>SHOT-04 テストは緑。でも、定員を超えた</h3><p>満席クリック→誤受付11/10（read-back一致）</p><a href="../evidence/runs/A-2026-09-16_05-10-19/evidence/outer-verification.json">outer-verification</a></div>
-  <div class="card"><img src="slide-ready/SHOT-05_opencode-check-measured.png"><h3>SHOT-05 説明ではなく、実際の結果で確かめる</h3><p>実OpenCodeのdemo_check実呼出し→verdict=FAIL・実測10→11を表示（公式Web UI・実backend・stub応答は固定と明記）</p><a href="../evidence/runs/A-2026-09-16_05-10-19/evidence/">session JSON・証拠一式</a></div>
+  <div class="card"><img src="slide-ready/SHOT-01_unit-tests-pass.png"><h3>SHOT-01 部品のテストは、全部通った</h3><p>broken候補の判定関数テスト 4/4合格（実端末）</p><a href="../evidence/runs/A-2026-09-16_07-08-06/evidence/launch-manifest.json">launch-manifest</a> ・ <a href="../evidence/runs/A-2026-09-16_07-08-06/evidence/outer-verification.json">outer-verification</a></div>
+  <div class="card"><img src="slide-ready/SHOT-02_register-9-to-10.png"><h3>SHOT-02 空席があれば、申し込める</h3><p>9名→受付成功・保存人数10（実ブラウザ操作）</p><a href="../evidence/runs/A-2026-09-16_07-08-06/app-info.json">app-info</a></div>
+  <div class="card"><img src="slide-ready/SHOT-03_full-before-click.png"><h3>SHOT-03 では、満席から申し込むと？</h3><p>新subrunで10/10復元・結果は未実施</p><a href="../evidence/runs/A-2026-09-16_07-08-06/app-info.json">app-info</a></div>
+  <div class="card"><img src="slide-ready/SHOT-04_over-capacity.png"><h3>SHOT-04 テストは緑。でも、定員を超えた</h3><p>満席クリック→誤受付11/10（read-back一致）</p><a href="../evidence/runs/A-2026-09-16_07-08-06/evidence/outer-verification.json">outer-verification</a></div>
+  <div class="card"><img src="slide-ready/SHOT-05_opencode-check-measured.png"><h3>SHOT-05 説明ではなく、実際の結果で確かめる</h3><p>実OpenCodeのdemo_check実呼出し→verdict=FAIL・実測10→11を表示（公式Web UI・実backend・stub応答は固定と明記）</p><a href="../evidence/runs/A-2026-09-16_07-08-06/evidence/">session JSON・証拠一式</a></div>
 </div>
 
 <h2>状態 B — 同じ欠陥を、公開する前に止める</h2>
 <div class="grid">
-  <div class="card"><img src="slide-ready/SHOT-06_guard-blocked.png"><h3>SHOT-06 同じ欠陥を、公開する前に止めた</h3><p>demo_publish実呼出し→tool.execute.beforeガードがACCEPTANCE_FAIL（app-03,app-04）で遮断・receiptなしを画面で明示</p><a href="../evidence/runs/B-2026-09-16_05-10-19/evidence/gate-events.jsonl">gate-events</a> ・ <a href="../evidence/runs/B-2026-09-16_05-10-19/evidence/outer-verification.json">outer-verification</a></div>
+  <div class="card"><img src="slide-ready/SHOT-06_guard-blocked.png"><h3>SHOT-06 同じ欠陥を、公開する前に止めた</h3><p>demo_publish実呼出し→tool.execute.beforeガードがACCEPTANCE_FAIL（app-03,app-04）で遮断・receiptなしを画面で明示</p><a href="../evidence/runs/B-2026-09-16_07-08-06/evidence/gate-events.jsonl">gate-events</a> ・ <a href="../evidence/runs/B-2026-09-16_07-08-06/evidence/outer-verification.json">outer-verification</a></div>
 </div>
 
 <h2>状態 C — アプリだけを直し、同じ検査で進める</h2>
 <div class="grid">
-  <div class="card"><img src="slide-ready/SHOT-07_app-only-diff.png"><h3>SHOT-07 変えたのはアプリ。合格の基準は変えない</h3><p>実差分: app/server.tsのみ変更・検査/ガードhash不変</p><a href="../evidence/runs/C-2026-09-16_05-10-20/evidence/launch-manifest.json">launch-manifest</a></div>
-  <div class="card"><img src="slide-ready/SHOT-08_full-rejected-10.png"><h3>SHOT-08 満席では拒否し、人数も増えない</h3><p>修復後: 満席クリック→409拒否・保存人数10のまま</p><a href="../evidence/runs/C-2026-09-16_05-10-20/app-info.json">app-info</a></div>
-  <div class="card"><img src="slide-ready/SHOT-09_publish-allowed-receipt.png"><h3>SHOT-09 正しいものは、同じ検査を通って進める</h3><p>同一検査PASS→ガード許可→receipt作成・manifest/receipt hash一致を画面で明示</p><a href="../evidence/runs/C-2026-09-16_05-10-20/publish/receipt.json">receipt</a> ・ <a href="../evidence/runs/C-2026-09-16_05-10-20/evidence/gate-events.jsonl">gate-events</a></div>
+  <div class="card"><img src="slide-ready/SHOT-07_app-only-diff.png"><h3>SHOT-07 変えたのはアプリ。合格の基準は変えない</h3><p>実差分: app/server.tsのみ変更・検査/ガードhash不変</p><a href="../evidence/runs/C-2026-09-16_07-08-06/evidence/launch-manifest.json">launch-manifest</a></div>
+  <div class="card"><img src="slide-ready/SHOT-08_full-rejected-10.png"><h3>SHOT-08 満席では拒否し、人数も増えない</h3><p>修復後: 満席クリック→409拒否・保存人数10のまま</p><a href="../evidence/runs/C-2026-09-16_07-08-06/app-info.json">app-info</a></div>
+  <div class="card"><img src="slide-ready/SHOT-09_publish-allowed-receipt.png"><h3>SHOT-09 正しいものは、同じ検査を通って進める</h3><p>同一検査PASS→ガード許可→receipt作成・manifest/receipt hash一致を画面で明示</p><a href="../evidence/runs/C-2026-09-16_07-08-06/publish/receipt.json">receipt</a> ・ <a href="../evidence/runs/C-2026-09-16_07-08-06/evidence/gate-events.jsonl">gate-events</a></div>
 </div>
 
 <h2>状態 D — 安全装置自体の接続を試す</h2>
 <div class="grid">
-  <div class="card"><img src="slide-ready/SHOT-10_guard-tests-pass.png"><h3>SHOT-10 安全装置の部品テストも、通ってしまう</h3><p>接続を外してもガード内部テスト 15/15 合格</p><a href="../source/trusted/guard-source/guard.test.ts">guard.test.ts</a> ・ <a href="../docs/TEST_REPORT.md">TEST_REPORT</a></div>
-  <div class="card"><img src="slide-ready/SHOT-11_unguarded-publish.png"><h3>SHOT-11 接続がなければ、未修正でも進んでしまった</h3><p>ガード未接続→demo_publish実行→未修正候補にreceipt作成（固定応答stubと明記）</p><a href="../evidence/runs/D-2026-09-16_05-10-20/publish/receipt.json">receipt</a> ・ <a href="../evidence/runs/D-2026-09-16_05-10-20/evidence/">session JSON・証拠一式</a></div>
-  <div class="card"><img src="slide-ready/SHOT-12_outer-verify-fail.png"><h3>SHOT-12 本当の入口を通すと、装置の故障にも気づける</h3><p>外側runtime_probe=FAIL「未修正なのに模擬公開」を検出 / 実験としての故障検出=PASS を2段で表示</p><a href="../evidence/runs/D-2026-09-16_05-10-20/evidence/outer-verification.json">outer-verification</a></div>
+  <div class="card"><img src="slide-ready/SHOT-10_guard-tests-pass.png"><h3>SHOT-10 安全装置の部品テストも、通ってしまう</h3><p>接続を外してもガード内部テスト 16/16 合格</p><a href="../source/trusted/guard-source/guard.test.ts">guard.test.ts</a> ・ <a href="../docs/TEST_REPORT.md">TEST_REPORT</a></div>
+  <div class="card"><img src="slide-ready/SHOT-11_unguarded-publish.png"><h3>SHOT-11 接続がなければ、未修正でも進んでしまった</h3><p>ガード未接続→demo_publish実行→未修正候補にreceipt作成（固定応答stubと明記）</p><a href="../evidence/runs/D-2026-09-16_07-08-06/publish/receipt.json">receipt</a> ・ <a href="../evidence/runs/D-2026-09-16_07-08-06/evidence/">session JSON・証拠一式</a></div>
+  <div class="card"><img src="slide-ready/SHOT-12_outer-verify-fail.png"><h3>SHOT-12 本当の入口を通すと、装置の故障にも気づける</h3><p>外側runtime_probe=FAIL「未修正なのに模擬公開」を検出 / 実験としての故障検出=PASS を2段で表示</p><a href="../evidence/runs/D-2026-09-16_07-08-06/evidence/outer-verification.json">outer-verification</a></div>
 </div>
 
-<h2>検証サマリー（実測・R2撮影run群）</h2>
+<h2>検証サマリー（実測・R3撮影run群 07-08-06）</h2>
 <table>
 <tr><th>run</th><th>単体</th><th>受入</th><th>publish呼出</th><th>gate</th><th>receipt</th><th>probe</th><th>scenario</th></tr>
-<tr><td><a href="../evidence/runs/A-2026-09-16_05-10-19/evidence/outer-verification.json">A-2026-09-16_05-10-19</a></td><td class="pass">PASS</td><td class="fail">FAIL</td><td>-</td><td>none(off)</td><td>absent</td><td>NOT_CALLED</td><td class="pass">PASS</td></tr>
-<tr><td><a href="../evidence/runs/B-2026-09-16_05-10-19/evidence/outer-verification.json">B-2026-09-16_05-10-19</a></td><td class="pass">PASS</td><td class="fail">FAIL</td><td>true</td><td>blocked</td><td>absent</td><td class="pass">PASS</td><td class="pass">PASS</td></tr>
-<tr><td><a href="../evidence/runs/C-2026-09-16_05-10-20/evidence/outer-verification.json">C-2026-09-16_05-10-20</a></td><td class="pass">PASS</td><td class="pass">PASS</td><td>true</td><td>allowed</td><td>valid</td><td class="pass">PASS</td><td class="pass">PASS</td></tr>
-<tr><td><a href="../evidence/runs/D-2026-09-16_05-10-20/evidence/outer-verification.json">D-2026-09-16_05-10-20</a></td><td class="pass">PASS</td><td class="fail">FAIL</td><td>true</td><td>none(off)</td><td>valid</td><td class="fail">FAIL</td><td class="pass">PASS</td></tr>
+<tr><td><a href="../evidence/runs/A-2026-09-16_07-08-06/evidence/outer-verification.json">A-2026-09-16_07-08-06</a></td><td class="pass">PASS</td><td class="fail">FAIL</td><td>-</td><td>none(off)</td><td>absent</td><td>NOT_CALLED</td><td class="pass">PASS</td></tr>
+<tr><td><a href="../evidence/runs/B-2026-09-16_07-08-06/evidence/outer-verification.json">B-2026-09-16_07-08-06</a></td><td class="pass">PASS</td><td class="fail">FAIL</td><td>true</td><td>blocked</td><td>absent</td><td class="pass">PASS</td><td class="pass">PASS</td></tr>
+<tr><td><a href="../evidence/runs/C-2026-09-16_07-08-06/evidence/outer-verification.json">C-2026-09-16_07-08-06</a></td><td class="pass">PASS</td><td class="pass">PASS</td><td>true</td><td>allowed</td><td>valid</td><td class="pass">PASS</td><td class="pass">PASS</td></tr>
+<tr><td><a href="../evidence/runs/D-2026-09-16_07-08-06/evidence/outer-verification.json">D-2026-09-16_07-08-06</a></td><td class="pass">PASS</td><td class="fail">FAIL</td><td>true</td><td>none(off)</td><td>valid</td><td class="fail">FAIL</td><td class="pass">PASS</td></tr>
 </table>
-<p>Dの probe=FAIL は意図した安全側検出（ガード未接続で欠陥品が通った事実を外側検証が報告）。<a href="../evidence/runs/B-2026-09-16_05-01-37/evidence/inspector-down.json">検査不能→実hook遮断の記録</a> ・ <a href="../evidence/fault-injection/">fault注入 修正前再現(r1-prefix)と修正後(r2-fixed*)の対比</a></p>
-<p>全試行の一覧: <a href="../evidence/trials-index.json">trials-index.json</a>（47試行・収録分類・モデル使用履歴つき）</p>
+<p>Dの probe=FAIL は意図した安全側検出（ガード未接続で欠陥品が通った事実を外側検証が報告）。<a href="../evidence/runs/B-2026-09-16_06-36-34/evidence/inspector-down.json">検査不能→実hook遮断の記録</a> ・ <a href="../evidence/fault-injection/">fault注入: 修正前再現(r1-prefix) / 修正後(r2-fixed-2) / R2検収変異の再検証(r3-mutations)</a></p>
+<p>納品試行の一覧: <a href="../evidence/trials-index.json">trials-index.json</a>（納品選別16試行・session/モデル使用履歴つき。履歴の全試行は開発側リポジトリに保管）</p>
 </body>
 </html>

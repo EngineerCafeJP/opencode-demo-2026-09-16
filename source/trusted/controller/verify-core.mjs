@@ -16,6 +16,9 @@
 export function evaluateRunVerification(f) {
   const violations = []
   if (!f.hashInvariant) violations.push("SNAPSHOT_CHANGED: 候補hashが起動時と不一致")
+  // R2-01: 収集側が確認した証拠同一性違反（run/session/call/検査器identity/終了状態）
+  // はそのまま最終判定へ伝播する。欠落や別試行の混入は FAIL 扱い。
+  for (const v of f.evidenceViolations ?? []) violations.push(v)
   if (f.receiptPresent && !f.receiptValid) violations.push(`RECEIPT_INVALID: ${f.receiptReason}`)
   if (f.appAcc === "ERROR") violations.push("ACCEPTANCE_ERROR: 受入検査自体が実行不能")
 

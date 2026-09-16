@@ -1,23 +1,23 @@
 {
-  "generated_at": "2026-09-16T05:12:59.359Z",
+  "generated_at": "2026-09-16T07:08:06.114Z",
   "opencode_version": "1.18.31",
   "shots": [
     {
       "shot_id": "SHOT-01",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:10:25.464Z",
+      "captured_at": "2026-09-16T07:08:12.097Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "terminal",
-      "run_id": "A-2026-09-16_05-10-19",
+      "run_id": "A-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "macOS-Terminal.app+screencapture",
       "viewport": null,
       "image_px": {
         "width": 3840,
-        "height": 1948
+        "height": 1956
       },
-      "raw_path": "assets/raw/SHOT-01__A-2026-09-16_05-10-19__01.png",
-      "sha256_png": "188f4f6b93ad473f1d5d734bb8368fce7317c1032f427b3b7a482c2fe751d5a9",
+      "raw_path": "assets/raw/SHOT-01__A-2026-09-16_07-08-06__01.png",
+      "sha256_png": "ace55f8a89c1332590a2c2c3b0036c8c3d712a2efe5330d8ac697cdad8c43f1c",
       "opencode_version": "1.18.31",
       "claims": [
         "broken候補の判定関数テストが全件合格する(9・10ケース含む)",
@@ -28,24 +28,21 @@
         "公開可否"
       ],
       "evidence": [
-        "runs/A-2026-09-16_05-10-19/evidence/"
+        "runs/A-2026-09-16_07-08-06/evidence/"
       ],
       "slide": "5 / 10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-01_unit-tests-pass.png",
-        "sha256_png": "124096a179b9c6e472d66441dbbced76d9edd00a193e503c30b6eb2794b91473",
-        "transform": "crop_top=86px"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-01_unit-tests-pass.png",
+      "slide_ready_sha256": "f174a3e4c397ba2be4183d86554b59e4392452dd3e14475cca37322911abbe35"
     },
     {
       "shot_id": "SHOT-02",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:10:27.000Z",
+      "captured_at": "2026-09-16T07:08:13.618Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "browser",
-      "run_id": "A-2026-09-16_05-10-19",
+      "run_id": "A-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "playwright-headless-chromium(real-app)",
       "viewport": {
@@ -57,8 +54,8 @@
         "width": 1920,
         "height": 1080
       },
-      "raw_path": "assets/raw/SHOT-02__A-2026-09-16_05-10-19__01.png",
-      "sha256_png": "7009a01b2aaf5ec05da9a323c823e33b3a18dc6eac81a5dfea6fc3812a315951",
+      "raw_path": "assets/raw/SHOT-02__A-2026-09-16_07-08-06__01.png",
+      "sha256_png": "2e1cbbe13d1f9dcdc1fc8d0669b678afe7f3c5600734f1eb7f3317b78f25bd95",
       "opencode_version": "1.18.31",
       "claims": [
         "空席(9名)からの申込が成功し保存人数が10になる"
@@ -68,24 +65,21 @@
         "公開可否"
       ],
       "evidence": [
-        "runs/A-2026-09-16_05-10-19/app-info.json"
+        "runs/A-2026-09-16_07-08-06/app-info.json"
       ],
       "slide": "10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-02_register-9-to-10.png",
-        "sha256_png": "7009a01b2aaf5ec05da9a323c823e33b3a18dc6eac81a5dfea6fc3812a315951",
-        "transform": "copy"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-02_register-9-to-10.png",
+      "slide_ready_sha256": "2e1cbbe13d1f9dcdc1fc8d0669b678afe7f3c5600734f1eb7f3317b78f25bd95"
     },
     {
       "shot_id": "SHOT-03",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:10:28.414Z",
+      "captured_at": "2026-09-16T07:08:15.023Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "browser",
-      "run_id": "A-2026-09-16_05-10-19",
+      "run_id": "A-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "playwright-headless-chromium(real-app)",
       "viewport": {
@@ -97,8 +91,8 @@
         "width": 1920,
         "height": 1080
       },
-      "raw_path": "assets/raw/SHOT-03__A-2026-09-16_05-10-19__01.png",
-      "sha256_png": "ff53a0450bf3521de9716ebe51411cb6a4acf9f6e5ff6c8772645634d749404f",
+      "raw_path": "assets/raw/SHOT-03__A-2026-09-16_07-08-06__01.png",
+      "sha256_png": "725a700bcb831a89b1c0d12bdf6b9e68bf77532e3c6f6432f6b6411b55f02c35",
       "opencode_version": "1.18.31",
       "claims": [
         "満席(10/10)の実画面。結果は未実施"
@@ -107,24 +101,21 @@
         "クリック後の挙動"
       ],
       "evidence": [
-        "runs/A-2026-09-16_05-10-19/app-info.json"
+        "runs/A-2026-09-16_07-08-06/app-info.json"
       ],
       "slide": "4 / 10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-03_full-before-click.png",
-        "sha256_png": "ff53a0450bf3521de9716ebe51411cb6a4acf9f6e5ff6c8772645634d749404f",
-        "transform": "copy"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-03_full-before-click.png",
+      "slide_ready_sha256": "725a700bcb831a89b1c0d12bdf6b9e68bf77532e3c6f6432f6b6411b55f02c35"
     },
     {
       "shot_id": "SHOT-04",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:10:28.538Z",
+      "captured_at": "2026-09-16T07:08:15.153Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "browser",
-      "run_id": "A-2026-09-16_05-10-19",
+      "run_id": "A-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "playwright-headless-chromium(real-app)",
       "viewport": {
@@ -136,8 +127,8 @@
         "width": 1920,
         "height": 1080
       },
-      "raw_path": "assets/raw/SHOT-04__A-2026-09-16_05-10-19__01.png",
-      "sha256_png": "8be653c2bd7a8a933dd8ccdcbe4dedcd7c41509e25c0428b3660aefc7808c990",
+      "raw_path": "assets/raw/SHOT-04__A-2026-09-16_07-08-06__01.png",
+      "sha256_png": "7b2df96c9bb4acfe363bbdf9fe0ed95ef93983584f88c2091cbb3ba17936614f",
       "opencode_version": "1.18.31",
       "claims": [
         "満席からのクリックが誤受付となり保存人数が11になる(brokenの実測)"
@@ -146,24 +137,21 @@
         "この状態で公開されること"
       ],
       "evidence": [
-        "runs/A-2026-09-16_05-10-19/app-info.json"
+        "runs/A-2026-09-16_07-08-06/app-info.json"
       ],
       "slide": "10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-04_over-capacity.png",
-        "sha256_png": "8be653c2bd7a8a933dd8ccdcbe4dedcd7c41509e25c0428b3660aefc7808c990",
-        "transform": "copy"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-04_over-capacity.png",
+      "slide_ready_sha256": "7b2df96c9bb4acfe363bbdf9fe0ed95ef93983584f88c2091cbb3ba17936614f"
     },
     {
       "shot_id": "SHOT-05",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:13:06.064Z",
+      "captured_at": "2026-09-16T07:08:25.670Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "opencode-webui",
-      "run_id": "A-2026-09-16_05-10-19",
+      "run_id": "A-2026-09-16_07-08-06",
       "profile": "off",
       "ui_used": "opencode-official-webui(fixed-1.18.31 serve)",
       "viewport": {
@@ -175,8 +163,8 @@
         "width": 1920,
         "height": 1080
       },
-      "raw_path": "assets/raw/SHOT-05__A-2026-09-16_05-10-19__01.png",
-      "sha256_png": "2d25df66994f2a437941fc0eb7b5af826145181a544bba72f52db8de4f752312",
+      "raw_path": "assets/raw/SHOT-05__A-2026-09-16_07-08-06__01.png",
+      "sha256_png": "91da92bd737ddeb760c5a968eaed03102561841f05a94f60634f713ebed11029",
       "opencode_version": "1.18.31",
       "claims": [
         "実OpenCodeがdemo_checkを実呼出しし、期待(10名で拒否)と実測(11名)が画面に出る"
@@ -185,34 +173,31 @@
         "この表示だけで公開可否が決まること"
       ],
       "evidence": [
-        "runs/A-2026-09-16_05-10-19/evidence/",
-        "runs/A-2026-09-16_05-10-19/evidence/session-ses_f575e0e99ffeab0d0xDgZnYQkS.json"
+        "runs/A-2026-09-16_07-08-06/evidence/",
+        "runs/A-2026-09-16_07-08-06/evidence/session-ses_f56f48922ffeX0s0HC34965aLR.json"
       ],
       "slide": "10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-05_opencode-check-measured.png",
-        "sha256_png": "2d25df66994f2a437941fc0eb7b5af826145181a544bba72f52db8de4f752312",
-        "transform": "copy"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-05_opencode-check-measured.png",
+      "slide_ready_sha256": "91da92bd737ddeb760c5a968eaed03102561841f05a94f60634f713ebed11029"
     },
     {
       "shot_id": "SHOT-06",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:10:53.016Z",
+      "captured_at": "2026-09-16T07:08:39.664Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "terminal",
-      "run_id": "B-2026-09-16_05-10-19",
+      "run_id": "B-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "macOS-Terminal.app+screencapture",
       "viewport": null,
       "image_px": {
         "width": 3840,
-        "height": 1948
+        "height": 1956
       },
-      "raw_path": "assets/raw/SHOT-06__B-2026-09-16_05-10-19__01.png",
-      "sha256_png": "34b5ca42bb1206b119db029d05e682404b9d6bae470c263cca3f6a26da055c93",
+      "raw_path": "assets/raw/SHOT-06__B-2026-09-16_07-08-06__01.png",
+      "sha256_png": "20173d92306c7b145b65271ce805e40e853568794ae10d578ae6aac4c516fff5",
       "opencode_version": "1.18.31",
       "claims": [
         "demo_publishの実呼出しがtool.execute.beforeガードで拒否される",
@@ -222,35 +207,32 @@
         "ガードが全経路を覆うこと(Dで反証)"
       ],
       "evidence": [
-        "runs/B-2026-09-16_05-10-19/evidence/gate-events.jsonl",
-        "runs/B-2026-09-16_05-10-19/evidence/session-ses_f57602131fferEV7leW0rU7Jxx.json",
-        "runs/B-2026-09-16_05-10-19/evidence/outer-verification.json"
+        "runs/B-2026-09-16_07-08-06/evidence/gate-events.jsonl",
+        "runs/B-2026-09-16_07-08-06/evidence/session-ses_f56f44c3dffeGkq8rVfgVl5dZ1.json",
+        "runs/B-2026-09-16_07-08-06/evidence/outer-verification.json"
       ],
       "slide": "9 / 10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-06_guard-blocked.png",
-        "sha256_png": "ccfea6a44f035c4ae265c15a15996dfa8aad46bf86dd50b07977a4d294650db6",
-        "transform": "crop_top=86px"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-06_guard-blocked.png",
+      "slide_ready_sha256": "246f2ab169b3404edb4e6a421cc7c24d0ca20aaddc1959b7d1dcce36d8a88603"
     },
     {
       "shot_id": "SHOT-07",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:10:58.090Z",
+      "captured_at": "2026-09-16T07:08:44.627Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "terminal",
-      "run_id": "C-2026-09-16_05-10-20",
+      "run_id": "C-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "macOS-Terminal.app+screencapture",
       "viewport": null,
       "image_px": {
         "width": 3840,
-        "height": 1948
+        "height": 1956
       },
-      "raw_path": "assets/raw/SHOT-07__C-2026-09-16_05-10-20__01.png",
-      "sha256_png": "11e410c5a5dda0639d42f6b834afb5bb1aefb6f15390ee1b20855c379adf4e39",
+      "raw_path": "assets/raw/SHOT-07__C-2026-09-16_07-08-06__01.png",
+      "sha256_png": "30521ac9a3206afd3e52d145e8d5413e112d942a24ba00e9f6bb9758782c53a0",
       "opencode_version": "1.18.31",
       "claims": [
         "変更はapp/配下の受付入口のみ(実差分)",
@@ -260,24 +242,21 @@
         "修正が正しいこと(別の検査で確認)"
       ],
       "evidence": [
-        "runs/C-2026-09-16_05-10-20/evidence/"
+        "runs/C-2026-09-16_07-08-06/evidence/"
       ],
       "slide": "10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-07_app-only-diff.png",
-        "sha256_png": "998a00ff0eb89f20672fd26520a1df39c407ce7537070720aa2f060ae01bbcb0",
-        "transform": "crop_top=86px"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-07_app-only-diff.png",
+      "slide_ready_sha256": "cbe8b007f700498c2aff7f0f7a55df94f0ea0c0b227f4c66de78be61d39842f0"
     },
     {
       "shot_id": "SHOT-08",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:10:59.592Z",
+      "captured_at": "2026-09-16T07:08:46.099Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "browser",
-      "run_id": "C-2026-09-16_05-10-20",
+      "run_id": "C-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "playwright-headless-chromium(real-app)",
       "viewport": {
@@ -289,8 +268,8 @@
         "width": 1920,
         "height": 1080
       },
-      "raw_path": "assets/raw/SHOT-08__C-2026-09-16_05-10-20__01.png",
-      "sha256_png": "47a6fc7209d7e40fc5a0e115e49ba8445da9e1c490d8b3af32aeaef27e8d2c29",
+      "raw_path": "assets/raw/SHOT-08__C-2026-09-16_07-08-06__01.png",
+      "sha256_png": "eee4bb04504734681757ed5a72de242fcb93bb27a6381d88c211eba1fb5ca76f",
       "opencode_version": "1.18.31",
       "claims": [
         "修復後アプリは満席クリックを拒否し保存人数が10のまま"
@@ -299,33 +278,30 @@
         "公開可否(別場面)"
       ],
       "evidence": [
-        "runs/C-2026-09-16_05-10-20/app-info.json"
+        "runs/C-2026-09-16_07-08-06/app-info.json"
       ],
       "slide": "10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-08_full-rejected-10.png",
-        "sha256_png": "47a6fc7209d7e40fc5a0e115e49ba8445da9e1c490d8b3af32aeaef27e8d2c29",
-        "transform": "copy"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-08_full-rejected-10.png",
+      "slide_ready_sha256": "eee4bb04504734681757ed5a72de242fcb93bb27a6381d88c211eba1fb5ca76f"
     },
     {
       "shot_id": "SHOT-09",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:11:13.358Z",
+      "captured_at": "2026-09-16T07:09:00.396Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "terminal",
-      "run_id": "C-2026-09-16_05-10-20",
+      "run_id": "C-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "macOS-Terminal.app+screencapture",
       "viewport": null,
       "image_px": {
         "width": 3840,
-        "height": 1948
+        "height": 1956
       },
-      "raw_path": "assets/raw/SHOT-09__C-2026-09-16_05-10-20__01.png",
-      "sha256_png": "861244d4e9daf0c5593bb0899453711b1249478129de5a56c414b953e1d4d090",
+      "raw_path": "assets/raw/SHOT-09__C-2026-09-16_07-08-06__01.png",
+      "sha256_png": "983d9068f37c59b25971a2e45035ae6a87b0952224b53952ff3ac82e1eb87cba",
       "opencode_version": "1.18.31",
       "claims": [
         "同じ検査で合格した候補はガードが許可しreceiptが作られる",
@@ -335,36 +311,33 @@
         "全ての安全の保証"
       ],
       "evidence": [
-        "runs/C-2026-09-16_05-10-20/publish/receipt.json",
-        "runs/C-2026-09-16_05-10-20/evidence/gate-events.jsonl",
-        "runs/C-2026-09-16_05-10-20/evidence/session-ses_f575fd14bffee3wx1gwe9nLIu6.json",
-        "runs/C-2026-09-16_05-10-20/evidence/outer-verification.json"
+        "runs/C-2026-09-16_07-08-06/publish/receipt.json",
+        "runs/C-2026-09-16_07-08-06/evidence/gate-events.jsonl",
+        "runs/C-2026-09-16_07-08-06/evidence/session-ses_f56f3fb1cffeQowFJRYZluMIo5.json",
+        "runs/C-2026-09-16_07-08-06/evidence/outer-verification.json"
       ],
       "slide": "10",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-09_publish-allowed-receipt.png",
-        "sha256_png": "96b494a5bb826242c6615f26340e9810da3c6629e7dcda19ebc1ffdf404f4b91",
-        "transform": "crop_top=86px"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-09_publish-allowed-receipt.png",
+      "slide_ready_sha256": "c3ef00cbdf9f3b1c21211500a944b900328902d2eccbbc37c844553b7e2bc020"
     },
     {
       "shot_id": "SHOT-10",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:11:18.375Z",
+      "captured_at": "2026-09-16T07:09:05.298Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "terminal",
-      "run_id": "D-2026-09-16_05-10-20",
+      "run_id": "D-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "macOS-Terminal.app+screencapture",
       "viewport": null,
       "image_px": {
         "width": 3840,
-        "height": 1948
+        "height": 1956
       },
-      "raw_path": "assets/raw/SHOT-10__D-2026-09-16_05-10-20__01.png",
-      "sha256_png": "a5884ed03394441ae6f9513552618d98f2fe1b6fa3d77e957d739f31734abfcd",
+      "raw_path": "assets/raw/SHOT-10__D-2026-09-16_07-08-06__01.png",
+      "sha256_png": "87f8f28829f9bdc1b88d41b20f5fb67df961cdd89339f9f5081b7cd5f15eb0a0",
       "opencode_version": "1.18.31",
       "claims": [
         "ガード接続を外した状態でもガード内部テストは合格する(部品としては正しい)"
@@ -378,19 +351,16 @@
       "slide": "11",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-10_guard-tests-pass.png",
-        "sha256_png": "e0267f5532ee4a6f385b320e5318c4292199454d445ad7c157a5647ba7d6b1b2",
-        "transform": "crop_top=86px"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-10_guard-tests-pass.png",
+      "slide_ready_sha256": "d24227a4aa07c53ca1bef44ad4d38257b77216b52206a1ebef6d115a1bdb4e5b"
     },
     {
       "shot_id": "SHOT-11",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:11:29.172Z",
+      "captured_at": "2026-09-16T07:09:14.899Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "opencode-webui",
-      "run_id": "D-2026-09-16_05-10-20",
+      "run_id": "D-2026-09-16_07-08-06",
       "profile": "off",
       "ui_used": "opencode-official-webui(fixed-1.18.31 serve)",
       "viewport": {
@@ -402,8 +372,8 @@
         "width": 1920,
         "height": 1080
       },
-      "raw_path": "assets/raw/SHOT-11__D-2026-09-16_05-10-20__01.png",
-      "sha256_png": "fe31cb8a103b6fb57be121a1101c26ef13e7879f2329c6bdc103600e54cf91e0",
+      "raw_path": "assets/raw/SHOT-11__D-2026-09-16_07-08-06__01.png",
+      "sha256_png": "801be3e7df121eca9f9319bee6508bb2c477245e268dd5dcaf96a7d0e8ca2c37",
       "opencode_version": "1.18.31",
       "claims": [
         "ガード未接続ではdemo_publishが実行され未修正候補にreceiptが作られる(実OpenCode経路)"
@@ -412,34 +382,31 @@
         "この公開が正しいこと"
       ],
       "evidence": [
-        "runs/D-2026-09-16_05-10-20/publish/receipt.json",
-        "runs/D-2026-09-16_05-10-20/evidence/session-ses_f575f9a6dffeQ5IrDDiVLt3xuH.json"
+        "runs/D-2026-09-16_07-08-06/publish/receipt.json",
+        "runs/D-2026-09-16_07-08-06/evidence/session-ses_f56f3c54bffesim83CRsaZ44oH.json"
       ],
       "slide": "11",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-11_unguarded-publish.png",
-        "sha256_png": "fe31cb8a103b6fb57be121a1101c26ef13e7879f2329c6bdc103600e54cf91e0",
-        "transform": "copy"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-11_unguarded-publish.png",
+      "slide_ready_sha256": "801be3e7df121eca9f9319bee6508bb2c477245e268dd5dcaf96a7d0e8ca2c37"
     },
     {
       "shot_id": "SHOT-12",
       "status": "CAPTURED",
-      "captured_at": "2026-09-16T05:11:35.050Z",
+      "captured_at": "2026-09-16T07:09:20.604Z",
       "timezone": "Asia/Tokyo",
       "screen_type": "terminal",
-      "run_id": "D-2026-09-16_05-10-20",
+      "run_id": "D-2026-09-16_07-08-06",
       "profile": null,
       "ui_used": "macOS-Terminal.app+screencapture",
       "viewport": null,
       "image_px": {
         "width": 3840,
-        "height": 1948
+        "height": 1956
       },
-      "raw_path": "assets/raw/SHOT-12__D-2026-09-16_05-10-20__01.png",
-      "sha256_png": "5761869b7fb6409199c6bdadf972c598262dc235272fe67e36eb9a75d2c3d0f4",
+      "raw_path": "assets/raw/SHOT-12__D-2026-09-16_07-08-06__01.png",
+      "sha256_png": "98b36fe7a98e696c2af7de336d71ad898322a1f11893a363814bc78ec5a633cd",
       "opencode_version": "1.18.31",
       "claims": [
         "外側のruntime_probeが『未修正なのに模擬公開された』を検出してFAILになる",
@@ -449,16 +416,13 @@
         "安全装置が働いたこと(働かなかったことを検出した話)"
       ],
       "evidence": [
-        "runs/D-2026-09-16_05-10-20/evidence/outer-verification.json"
+        "runs/D-2026-09-16_07-08-06/evidence/outer-verification.json"
       ],
       "slide": "11 / 12",
       "secret_check": "window/url/run-idのみ。認証値・業務画面・個人名パスなし(目視+領域限定)",
       "processing": "none(raw)",
-      "slide_ready": {
-        "path": "assets/slide-ready/SHOT-12_outer-verify-fail.png",
-        "sha256_png": "241d186d1844258b9a956618b071708cc668224909e6a31a9411010daece4bad",
-        "transform": "crop_top=86px"
-      }
+      "slide_ready_path": "assets/slide-ready/SHOT-12_outer-verify-fail.png",
+      "slide_ready_sha256": "fe54984ff42e0c74114cd4f1e9f1b6d3aee522b8ebe3a3042b67a32b17217f78"
     }
   ]
 }

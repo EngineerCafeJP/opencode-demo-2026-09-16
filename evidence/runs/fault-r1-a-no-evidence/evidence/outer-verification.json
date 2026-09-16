@@ -1,24 +1,28 @@
 {
   "run_id": "fault-r1-a-no-evidence",
   "stage": "A",
-  "verified_at": "2026-09-16T04:52:21.189Z",
+  "verified_at": "2026-09-16T06:25:30.827Z",
   "facts": {
     "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
     "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
     "hash_invariant": true,
     "unit_tests": "PASS",
     "app_acceptance": "FAIL",
-    "acceptance_evidence": "runs/fault-r1-a-no-evidence/evidence/acceptance-verify-1789534340570.json",
+    "acceptance_evidence": "runs/fault-r1-a-no-evidence/evidence/acceptance-verify-1789539930212.json",
     "tool_called_demo_publish": false,
     "tool_called_demo_check": false,
     "gate_decision": "none",
     "gate_reason": null,
     "receipt": "absent",
     "guard_connected": true,
+    "inspector_identity": "canonical",
+    "bound_calls": 0,
     "session_models_used": [],
     "default_model_in_manifest": "undefined/undefined"
   },
-  "violations": [],
+  "violations": [
+    "INSPECTOR_IDENTITY_MISMATCH: manifest=undefined actual=82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828"
+  ],
   "runtime_probe": "NOT_CALLED",
   "intended_fault_detected": false,
   "scenario_match": "FAIL"

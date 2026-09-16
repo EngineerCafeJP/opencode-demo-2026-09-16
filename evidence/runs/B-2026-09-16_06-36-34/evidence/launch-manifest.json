@@ -1,0 +1,24 @@
+{
+  "run_id": "B-2026-09-16_06-36-34",
+  "stage": "B",
+  "profile": "on",
+  "created_at": "2026-09-16T06:36:34.926Z",
+  "opencode_version": "1.18.31",
+  "opencode_sha256": "16c960ba77421da11b53e785f359b73f328a86118b48feb4af143db5d9afb198",
+  "opencode_acquisition": "official-distribution-binary",
+  "candidate_dir": "<DEMO_ROOT>/runs/B-2026-09-16_06-36-34/candidate",
+  "candidate_sha256": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+  "acceptance_sha256": "e52b7244f2c0ef25c609467321dbf8a25b98dadceaf50a0d2668d163adb441b0",
+  "acceptance_path": "trusted/fault-injection/always-error-acceptance.ts",
+  "inspector_override": true,
+  "guard_sha256": "e8e0e244dd2a8605d81958b46e6c2a1ce7e5ed6323705759af986f41e2973691",
+  "tools_sha256": {
+    "demo_check.ts": "d309c4d4dd5f16ca98640874b259567472a46eefb1ee7f00d55829c51dd357cc",
+    "demo_publish.ts": "b89697f13df0ed0de792a96866c6d7f9dcfcbf9651c007ce7e2a888e5215795e"
+  },
+  "guard_connected": true,
+  "model_default": {
+    "provider": "ollama-local",
+    "id": "gemma4:e2b"
+  }
+}

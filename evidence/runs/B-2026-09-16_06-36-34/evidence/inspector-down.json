@@ -1,0 +1,10 @@
+{
+  "run_id": "B-2026-09-16_06-36-34",
+  "at": "2026-09-16T06:36:42.115Z",
+  "inspector": "always-error-acceptance.ts",
+  "tool_start_seen": true,
+  "hook_decision": "blocked",
+  "hook_reason": "CHECK_UNAVAILABLE: 検査が異常終了(exit=4)",
+  "tool_body_executed": false,
+  "receipt_present": false
+}

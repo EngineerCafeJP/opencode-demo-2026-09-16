@@ -14,7 +14,7 @@ const EXCLUDE_FILE = (name: string) =>
   name.endsWith(".log") || name.endsWith(".env") || name === "credentials.json" || name === "auth.json"
 
 // dirhash-1: trusted/lib/hash.mjs と同一実装（このガードは単独配備されるため複写）
-function dirHash(root: string): string {
+export function dirHash(root: string): string {
   const real = realpathSync(root)
   const entries: string[] = []
   walk(real, "")
@@ -55,6 +55,12 @@ function dirHash(root: string): string {
       }
     }
   }
+}
+
+// R2-02: 起動manifestに記録された検査器hashと、実際に実行する検査器ファイルを照合する。
+// manifestへの記録だけでは不十分 — 実行直前に identity を検証してから検査器を動かす。
+function fileSha256(file: string): string {
+  return createHash("sha256").update(readFileSync(file)).digest("hex")
 }
 
 function gateEvent(runDir: string, entry: Record<string, unknown>) {
@@ -149,10 +155,12 @@ export default {
         throw new Error(`${GATE}: 環境変数不足（DEMO_RUN_DIR/DEMO_CANDIDATE_DIR/DEMO_ACCEPTANCE）— 検査不能のため遮断`)
       }
       gateEvent(runDir, { phase: "start", attempt, tool: input.tool, session_id: input.sessionID, call_id: input.callID })
+      // R2-01: decision 側にも同一呼出しのidentityを載せる（startだけでは別試行の判定混入を排除できない）
+      const identity = { session_id: input.sessionID, call_id: input.callID }
 
       const manifestPath = path.join(runDir, "evidence", "launch-manifest.json")
       if (!existsSync(manifestPath)) {
-        gateEvent(runDir, { phase: "decision", attempt, decision: "blocked", reason: "launch-manifest.json なし" })
+        gateEvent(runDir, { phase: "decision", attempt, ...identity, decision: "blocked", reason: "launch-manifest.json なし" })
         throw new Error(`${GATE}: launch-manifest.json なし — 起動記録がないため遮断`)
       }
       const manifest = JSON.parse(readFileSync(manifestPath, "utf8"))
@@ -161,12 +169,22 @@ export default {
       try {
         actual = dirHash(candidate)
       } catch (e) {
-        gateEvent(runDir, { phase: "decision", attempt, decision: "blocked", reason: `hash error: ${e}` })
+        gateEvent(runDir, { phase: "decision", attempt, ...identity, decision: "blocked", reason: `hash error: ${e}` })
         throw new Error(`${GATE}: 候補ハッシュ計算不能 — ${e}`)
       }
       if (actual !== manifest.candidate_sha256) {
-        gateEvent(runDir, { phase: "decision", attempt, decision: "blocked", reason: `SNAPSHOT_MISMATCH manifest=${manifest.candidate_sha256} actual=${actual}` })
+        gateEvent(runDir, { phase: "decision", attempt, ...identity, decision: "blocked", reason: `SNAPSHOT_MISMATCH manifest=${manifest.candidate_sha256} actual=${actual}` })
         throw new Error(`${GATE}: SNAPSHOT_MISMATCH — 起動時と候補が異なるため遮断`)
+      }
+
+      // 固定検査器のidentity照合（起動時に承認された検査器と同一ファイルか）
+      const inspectorActual = fileSha256(acceptance)
+      if (inspectorActual !== manifest.acceptance_sha256) {
+        gateEvent(runDir, {
+          phase: "decision", attempt, ...identity, decision: "blocked",
+          reason: `INSPECTOR_IDENTITY_MISMATCH manifest=${manifest.acceptance_sha256} actual=${inspectorActual}`,
+        })
+        throw new Error(`${GATE}: INSPECTOR_IDENTITY_MISMATCH — 起動時に記録された検査器と異なるため遮断`)
       }
 
       const outFile = path.join(runDir, "evidence", `acceptance-gate-${attempt}.json`)
@@ -200,6 +218,7 @@ export default {
       gateEvent(runDir, {
         phase: "decision",
         attempt,
+        ...identity,
         decision: decision.allow ? "allowed" : "blocked",
         reason: decision.reason,
         acceptance_path: outFile,
