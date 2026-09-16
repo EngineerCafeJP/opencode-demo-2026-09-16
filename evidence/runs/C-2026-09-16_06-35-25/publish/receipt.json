@@ -1,0 +1,12 @@
+{
+  "tool": "demo_publish",
+  "kind": "local-mock-publish-receipt",
+  "run_id": "C-2026-09-16_06-35-25",
+  "candidate_sha256": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
+  "manifest_sha256": "16c960ba77421da11b53e785f359b73f328a86118b48feb4af143db5d9afb198",
+  "session_id": "ses_f57128160fferPHoB4vVCVUuH1",
+  "call_id": "call_yop30sa2",
+  "published_at": "2026-09-16T06:35:33.263Z",
+  "note": "recovery-c",
+  "disclaimer": "教材用のローカル記録。実サービスへの公開ではない。"
+}

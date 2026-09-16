@@ -1,2 +1,0 @@
-{"gate":"demo-gate","at":"2026-09-16T02:18:52.695Z","phase":"start","attempt":"1789525132695","tool":"demo_publish","session_id":"ses_f57fd7d78ffep1oh2vUu0skAxo","call_id":"call_y6e08cg2"}
-{"gate":"demo-gate","at":"2026-09-16T02:18:53.319Z","phase":"decision","attempt":"1789525132695","decision":"allowed","reason":"acceptance PASS","acceptance_path":"<DEMO_ROOT>/runs/C-2026-09-16_02-18-46/evidence/acceptance-gate-1789525132695.json","acceptance_exit":0,"candidate_sha256":"d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1"}

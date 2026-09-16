@@ -1,9 +1,0 @@
-{
-  "pid": 48416,
-  "port": 56741,
-  "url": "http://127.0.0.1:56741",
-  "fixture": "full",
-  "state_file": "<DEMO_ROOT>/runs/A-2026-09-16_05-10-19/runtime/ui-state.json",
-  "started_at": "2026-09-16T05:10:28.276Z",
-  "identity": "<DEMO_ROOT>/runs/A-2026-09-16_05-10-19/candidate/app/server.ts"
-}

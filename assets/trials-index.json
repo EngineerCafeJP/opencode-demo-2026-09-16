@@ -1,196 +1,323 @@
 {
-  "generated_at": "2026-09-16T02:52:50.647Z",
+  "generated_at": "2026-09-16T07:13:43.682Z",
+  "scope": "demo-delivery/evidence/runs（納品選別済み。private/除外）",
   "trials": [
     {
-      "run_id": "A-2026-09-16_02-00-23",
-      "verified": {
-        "run_id": "A-2026-09-16_02-00-23",
-        "stage": "A",
-        "verified_at": "2026-09-16T02:00:53.600Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/A-2026-09-16_02-00-23/evidence/acceptance-verify-1789524052983.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "blocked",
-          "gate_reason": "ACCEPTANCE_FAIL: 受入検査が合格でない",
-          "receipt": "absent",
-          "guard_connected": true
-        },
-        "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+      "run_id": "A-2026-09-16_06-34-39",
+      "stage": "A",
+      "profile": "off",
+      "guard_connected": false,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
       },
-      "gate_events": 2,
-      "tool_calls": [
-        {
-          "tool": "demo_publish",
-          "status": "error",
-          "session": "session-ses_f580e451bffeMBmY0P711LNVXy.json"
-        }
-      ]
-    },
-    {
-      "run_id": "A-2026-09-16_02-16-17",
       "verified": {
-        "run_id": "A-2026-09-16_02-16-17",
         "stage": "A",
-        "verified_at": "2026-09-16T02:16:29.069Z",
         "facts": {
           "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
           "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
           "hash_invariant": true,
           "unit_tests": "PASS",
           "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/A-2026-09-16_02-16-17/evidence/acceptance-verify-1789524988446.json",
+          "acceptance_evidence": "runs/A-2026-09-16_06-34-39/evidence/acceptance-verify-1789540487394.json",
           "tool_called_demo_publish": false,
           "tool_called_demo_check": true,
           "gate_decision": "none",
           "gate_reason": null,
           "receipt": "absent",
-          "guard_connected": true
+          "guard_connected": false,
+          "inspector_identity": "canonical",
+          "bound_calls": 1,
+          "session_models_used": [
+            "stub-local/stub-demo"
+          ],
+          "default_model_in_manifest": "ollama-local/gemma4:e2b"
         },
+        "violations": [],
         "runtime_probe": "NOT_CALLED",
-        "scenario_match": "PASS"
+        "intended_fault_detected": false,
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T06:34:48.019Z"
       },
-      "gate_events": 0,
-      "tool_calls": [
+      "sessions": [
         {
-          "tool": "demo_check",
-          "status": "completed",
-          "session": "session-ses_f57ffb435ffehCVr3uAMLCMlK0.json"
+          "file": "evidence/session-ses_f5713494dffehGDWFVuYYpUV6N.json",
+          "session_id": "ses_f5713494dffehGDWFVuYYpUV6N",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_check",
+              "callID": "call_dtuq85os",
+              "status": "completed"
+            }
+          ]
         }
-      ]
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
+      "gate_events": 0,
+      "receipt": false
     },
     {
-      "run_id": "A-2026-09-16_02-18-27",
+      "run_id": "A-2026-09-16_07-08-06",
+      "stage": "A",
+      "profile": "off",
+      "guard_connected": false,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
       "verified": {
-        "run_id": "A-2026-09-16_02-18-27",
         "stage": "A",
-        "verified_at": "2026-09-16T02:18:37.929Z",
         "facts": {
           "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
           "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
           "hash_invariant": true,
           "unit_tests": "PASS",
           "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/A-2026-09-16_02-18-27/evidence/acceptance-verify-1789525117303.json",
+          "acceptance_evidence": "runs/A-2026-09-16_07-08-06/evidence/acceptance-verify-1789542572837.json",
           "tool_called_demo_publish": false,
           "tool_called_demo_check": true,
           "gate_decision": "none",
           "gate_reason": null,
           "receipt": "absent",
-          "guard_connected": true
+          "guard_connected": false,
+          "inspector_identity": "canonical",
+          "bound_calls": 1,
+          "session_models_used": [
+            "stub-local/stub-demo"
+          ],
+          "default_model_in_manifest": "ollama-local/gemma4:e2b"
         },
+        "violations": [],
         "runtime_probe": "NOT_CALLED",
-        "scenario_match": "PASS"
+        "intended_fault_detected": false,
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T07:09:33.446Z"
       },
-      "gate_events": 0,
-      "tool_calls": [
+      "sessions": [
         {
-          "tool": "demo_check",
-          "status": "completed",
-          "session": "session-ses_f57fdbce7ffezH67N3MkN40aKh.json"
+          "file": "evidence/session-ses_f56f48922ffeX0s0HC34965aLR.json",
+          "session_id": "ses_f56f48922ffeX0s0HC34965aLR",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_check",
+              "callID": "call_1db4176h",
+              "status": "completed"
+            }
+          ]
         }
-      ]
-    },
-    {
-      "run_id": "A-2026-09-16_02-48-40",
-      "verified": null,
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
       "gate_events": 0,
-      "tool_calls": []
+      "receipt": false
     },
     {
-      "run_id": "B-2026-09-16_02-00-58",
-      "verified": null,
-      "gate_events": 2,
-      "tool_calls": [
-        {
-          "tool": "demo_publish",
-          "status": "error",
-          "session": "session-ses_f580dc4d7ffeM0pj7ZMYvnqJqa.json"
-        }
-      ]
-    },
-    {
-      "run_id": "B-2026-09-16_02-16-45",
+      "run_id": "B-2026-09-16_06-34-48",
+      "stage": "B",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
       "verified": {
-        "run_id": "B-2026-09-16_02-16-45",
         "stage": "B",
-        "verified_at": "2026-09-16T02:16:53.490Z",
         "facts": {
           "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
           "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
           "hash_invariant": true,
           "unit_tests": "PASS",
           "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/B-2026-09-16_02-16-45/evidence/acceptance-verify-1789525012869.json",
+          "acceptance_evidence": "runs/B-2026-09-16_06-34-48/evidence/acceptance-verify-1789540495404.json",
           "tool_called_demo_publish": true,
           "tool_called_demo_check": false,
           "gate_decision": "blocked",
-          "gate_reason": "ACCEPTANCE_FAIL: 受入検査が合格でない",
+          "gate_reason": "ACCEPTANCE_FAIL: 個別検査不合格 app-03,app-04",
           "receipt": "absent",
-          "guard_connected": true
+          "guard_connected": true,
+          "inspector_identity": "canonical",
+          "bound_calls": 1,
+          "session_models_used": [
+            "stub-local/stub-demo"
+          ],
+          "default_model_in_manifest": "ollama-local/gemma4:e2b"
         },
+        "violations": [],
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "intended_fault_detected": false,
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T06:34:56.024Z"
       },
-      "gate_events": 2,
-      "tool_calls": [
+      "sessions": [
         {
-          "tool": "demo_publish",
-          "status": "error",
-          "session": "session-ses_f57ff548bffeJ9XtWv4AFhuUFy.json"
+          "file": "evidence/session-ses_f571315daffeCjSo12eBcjCmhz.json",
+          "session_id": "ses_f571315daffeCjSo12eBcjCmhz",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_a5ei994o",
+              "status": "error"
+            }
+          ]
         }
-      ]
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
+      "gate_events": 2,
+      "receipt": false
     },
     {
-      "run_id": "B-2026-09-16_02-18-38",
+      "run_id": "B-2026-09-16_06-35-17",
+      "stage": "B",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
+      "sessions": [
+        {
+          "file": "evidence/session-ses_f5712a1b2ffepeXIx2uy2Tk14Z.json",
+          "session_id": "ses_f5712a1b2ffepeXIx2uy2Tk14Z",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_xiwx9yqn",
+              "status": "error"
+            }
+          ]
+        }
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
+      "gate_events": 2,
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_06-36-34",
+      "stage": "B",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": true,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
+      "sessions": [
+        {
+          "file": "evidence/session-ses_f571172aeffeTRl8MnNTvd2QFa.json",
+          "session_id": "ses_f571172aeffeTRl8MnNTvd2QFa",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_5p830qa4",
+              "status": "error"
+            }
+          ]
+        }
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
+      "gate_events": 2,
+      "receipt": false,
+      "inspector_down": {
+        "run_id": "B-2026-09-16_06-36-34",
+        "at": "2026-09-16T06:36:42.115Z",
+        "inspector": "always-error-acceptance.ts",
+        "tool_start_seen": true,
+        "hook_decision": "blocked",
+        "hook_reason": "CHECK_UNAVAILABLE: 検査が異常終了(exit=4)",
+        "tool_body_executed": false,
+        "receipt_present": false
+      }
+    },
+    {
+      "run_id": "B-2026-09-16_07-08-06",
+      "stage": "B",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
       "verified": {
-        "run_id": "B-2026-09-16_02-18-38",
         "stage": "B",
-        "verified_at": "2026-09-16T02:18:45.939Z",
         "facts": {
           "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
           "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
           "hash_invariant": true,
           "unit_tests": "PASS",
           "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/B-2026-09-16_02-18-38/evidence/acceptance-verify-1789525125321.json",
+          "acceptance_evidence": "runs/B-2026-09-16_07-08-06/evidence/acceptance-verify-1789542573627.json",
           "tool_called_demo_publish": true,
           "tool_called_demo_check": false,
           "gate_decision": "blocked",
-          "gate_reason": "ACCEPTANCE_FAIL: 受入検査が合格でない",
+          "gate_reason": "ACCEPTANCE_FAIL: 個別検査不合格 app-03,app-04",
           "receipt": "absent",
-          "guard_connected": true
+          "guard_connected": true,
+          "inspector_identity": "canonical",
+          "bound_calls": 1,
+          "session_models_used": [
+            "stub-local/stub-demo"
+          ],
+          "default_model_in_manifest": "ollama-local/gemma4:e2b"
         },
+        "violations": [],
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "intended_fault_detected": false,
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T07:09:34.238Z"
       },
-      "gate_events": 2,
-      "tool_calls": [
+      "sessions": [
         {
-          "tool": "demo_publish",
-          "status": "error",
-          "session": "session-ses_f57fd9d53ffe5SvuD972X2Et1S.json"
+          "file": "evidence/session-ses_f56f44c3dffeGkq8rVfgVl5dZ1.json",
+          "session_id": "ses_f56f44c3dffeGkq8rVfgVl5dZ1",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_wcfp7jv2",
+              "status": "error"
+            }
+          ]
         }
-      ]
-    },
-    {
-      "run_id": "B-2026-09-16_02-48-40",
-      "verified": null,
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
       "gate_events": 2,
-      "tool_calls": []
+      "receipt": false
     },
     {
       "run_id": "C-2026-09-16_02-02-27",
+      "stage": "C",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
       "verified": {
-        "run_id": "C-2026-09-16_02-02-27",
         "stage": "C",
-        "verified_at": "2026-09-16T02:14:55.042Z",
         "facts": {
           "candidate_sha256_manifest": "42cbfb2ae535055ffb21db375b01695deab3e5e623b0b9d2cfb009e37c2cf9f2",
           "candidate_sha256_now": "42cbfb2ae535055ffb21db375b01695deab3e5e623b0b9d2cfb009e37c2cf9f2",
@@ -206,333 +333,571 @@
           "guard_connected": true
         },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T02:14:55.042Z"
       },
-      "gate_events": 2,
-      "tool_calls": [
+      "sessions": [
         {
-          "tool": "demo_publish",
-          "status": "completed",
-          "session": "session-ses_f5801319dffeg10612hNLQv5aj.json"
+          "file": "evidence/session-ses_f5801319dffeg10612hNLQv5aj.json",
+          "session_id": "ses_f5801319dffeg10612hNLQv5aj",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_4gamvtdt",
+              "status": "completed"
+            }
+          ]
         },
         {
-          "tool": "demo_check",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
+          "file": "evidence/session-ses_f580b130cffep6UfbgpyM08TcZ.json",
+          "session_id": "ses_f580b130cffep6UfbgpyM08TcZ",
+          "provider": "ollama-local",
+          "model": "gemma4:31b",
+          "tool_calls": [
+            {
+              "tool": "demo_check",
+              "callID": "call_caqzmpju",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_zchplec6",
+              "status": "completed"
+            },
+            {
+              "tool": "edit",
+              "callID": "call_6p38wpox",
+              "status": "completed"
+            },
+            {
+              "tool": "demo_check",
+              "callID": "call_nfgu3xf5",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_3yqe7f3i",
+              "status": "completed"
+            },
+            {
+              "tool": "grep",
+              "callID": "call_bzk9edgk",
+              "status": "completed"
+            },
+            {
+              "tool": "glob",
+              "callID": "call_sqx6ujz3",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_s9vx7qej",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_b572y49o",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_xuulhyc1",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_52zbm51r",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_xwyk5lhk",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_8y86s8nl",
+              "status": "completed"
+            },
+            {
+              "tool": "edit",
+              "callID": "call_u2a8d5ah",
+              "status": "completed"
+            },
+            {
+              "tool": "demo_check",
+              "callID": "call_ojw5avvi",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_f90p5fbe",
+              "status": "completed"
+            },
+            {
+              "tool": "edit",
+              "callID": "call_1usrunnv",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_jr0gc6tt",
+              "status": "completed"
+            },
+            {
+              "tool": "edit",
+              "callID": "call_5f0xpgp7",
+              "status": "completed"
+            },
+            {
+              "tool": "demo_check",
+              "callID": "call_a13xesf0",
+              "status": "completed"
+            }
+          ]
         },
         {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "edit",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "demo_check",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "grep",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "glob",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "edit",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "demo_check",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "edit",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "edit",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "demo_check",
-          "status": "completed",
-          "session": "session-ses_f580b130cffep6UfbgpyM08TcZ.json"
-        },
-        {
-          "tool": "demo_check",
-          "status": "completed",
-          "session": "session-ses_f580c4363ffeXLFCTTQjeyGwkC.json"
-        },
-        {
-          "tool": "read",
-          "status": "completed",
-          "session": "session-ses_f580c4363ffeXLFCTTQjeyGwkC.json"
-        },
-        {
-          "tool": "edit",
-          "status": "error",
-          "session": "session-ses_f580c4363ffeXLFCTTQjeyGwkC.json"
-        },
-        {
-          "tool": "edit",
-          "status": "error",
-          "session": "session-ses_f580c4363ffeXLFCTTQjeyGwkC.json"
-        },
-        {
-          "tool": "demo_check",
-          "status": "completed",
-          "session": "session-ses_f580c4363ffeXLFCTTQjeyGwkC.json"
+          "file": "evidence/session-ses_f580c4363ffeXLFCTTQjeyGwkC.json",
+          "session_id": "ses_f580c4363ffeXLFCTTQjeyGwkC",
+          "provider": "ollama-local",
+          "model": "gemma4:e2b",
+          "tool_calls": [
+            {
+              "tool": "demo_check",
+              "callID": "call_yjjqtqrl",
+              "status": "completed"
+            },
+            {
+              "tool": "read",
+              "callID": "call_vhtfc25x",
+              "status": "completed"
+            },
+            {
+              "tool": "edit",
+              "callID": "call_jf8jb7u4",
+              "status": "error"
+            },
+            {
+              "tool": "edit",
+              "callID": "call_yk56wtta",
+              "status": "error"
+            },
+            {
+              "tool": "demo_check",
+              "callID": "call_rv1z24g1",
+              "status": "completed"
+            }
+          ]
         }
-      ]
+      ],
+      "models_used": [
+        "stub-local/stub-demo",
+        "ollama-local/gemma4:31b",
+        "ollama-local/gemma4:e2b"
+      ],
+      "gate_events": 2,
+      "receipt": true
     },
     {
-      "run_id": "C-2026-09-16_02-17-45",
+      "run_id": "C-2026-09-16_06-34-56",
+      "stage": "C",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
       "verified": {
-        "run_id": "C-2026-09-16_02-17-45",
         "stage": "C",
-        "verified_at": "2026-09-16T02:17:55.984Z",
         "facts": {
           "candidate_sha256_manifest": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
           "candidate_sha256_now": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
           "hash_invariant": true,
           "unit_tests": "PASS",
           "app_acceptance": "PASS",
-          "acceptance_evidence": "runs/C-2026-09-16_02-17-45/evidence/acceptance-verify-1789525075354.json",
+          "acceptance_evidence": "runs/C-2026-09-16_06-34-56/evidence/acceptance-verify-1789540503625.json",
           "tool_called_demo_publish": true,
           "tool_called_demo_check": false,
           "gate_decision": "allowed",
-          "gate_reason": "acceptance PASS",
+          "gate_reason": "acceptance PASS (exit=0・必須4ケース全合格・identity一致)",
           "receipt": "valid",
-          "guard_connected": true
+          "guard_connected": true,
+          "inspector_identity": "canonical",
+          "bound_calls": 1,
+          "session_models_used": [
+            "stub-local/stub-demo"
+          ],
+          "default_model_in_manifest": "ollama-local/gemma4:e2b"
         },
+        "violations": [],
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "intended_fault_detected": false,
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T06:35:04.251Z"
       },
-      "gate_events": 2,
-      "tool_calls": [
+      "sessions": [
         {
-          "tool": "demo_publish",
-          "status": "completed",
-          "session": "session-ses_f57fe60caffewfZlKT0nWlmBne.json"
+          "file": "evidence/session-ses_f5712f5beffe4N15xS2GRM358H.json",
+          "session_id": "ses_f5712f5beffe4N15xS2GRM358H",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_cepn27df",
+              "status": "completed"
+            }
+          ]
         }
-      ]
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
+      "gate_events": 2,
+      "receipt": true
     },
     {
-      "run_id": "C-2026-09-16_02-18-46",
+      "run_id": "C-2026-09-16_06-35-25",
+      "stage": "C",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
+      "sessions": [
+        {
+          "file": "evidence/session-ses_f57128160fferPHoB4vVCVUuH1.json",
+          "session_id": "ses_f57128160fferPHoB4vVCVUuH1",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_yop30sa2",
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
+      "gate_events": 2,
+      "receipt": true
+    },
+    {
+      "run_id": "C-2026-09-16_07-08-06",
+      "stage": "C",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
       "verified": {
-        "run_id": "C-2026-09-16_02-18-46",
         "stage": "C",
-        "verified_at": "2026-09-16T02:18:54.093Z",
         "facts": {
           "candidate_sha256_manifest": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
           "candidate_sha256_now": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
           "hash_invariant": true,
           "unit_tests": "PASS",
           "app_acceptance": "PASS",
-          "acceptance_evidence": "runs/C-2026-09-16_02-18-46/evidence/acceptance-verify-1789525133467.json",
+          "acceptance_evidence": "runs/C-2026-09-16_07-08-06/evidence/acceptance-verify-1789542574421.json",
           "tool_called_demo_publish": true,
           "tool_called_demo_check": false,
           "gate_decision": "allowed",
-          "gate_reason": "acceptance PASS",
+          "gate_reason": "acceptance PASS (exit=0・必須4ケース全合格・identity一致)",
           "receipt": "valid",
-          "guard_connected": true
+          "guard_connected": true,
+          "inspector_identity": "canonical",
+          "bound_calls": 1,
+          "session_models_used": [
+            "stub-local/stub-demo"
+          ],
+          "default_model_in_manifest": "ollama-local/gemma4:e2b"
         },
+        "violations": [],
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "intended_fault_detected": false,
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T07:09:35.032Z"
       },
+      "sessions": [
+        {
+          "file": "evidence/session-ses_f56f3fb1cffeQowFJRYZluMIo5.json",
+          "session_id": "ses_f56f3fb1cffeQowFJRYZluMIo5",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_3c5t8jcu",
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
       "gate_events": 2,
-      "tool_calls": [
-        {
-          "tool": "demo_publish",
-          "status": "completed",
-          "session": "session-ses_f57fd7d78ffep1oh2vUu0skAxo.json"
-        }
-      ]
+      "receipt": true
     },
     {
-      "run_id": "C-2026-09-16_02-48-41",
-      "verified": null,
+      "run_id": "D-2026-09-16_06-35-09",
+      "stage": "D",
+      "profile": "off",
+      "guard_connected": false,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
+      "verified": {
+        "stage": "D",
+        "facts": {
+          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "hash_invariant": true,
+          "unit_tests": "PASS",
+          "app_acceptance": "FAIL",
+          "acceptance_evidence": "runs/D-2026-09-16_06-35-09/evidence/acceptance-verify-1789540516971.json",
+          "tool_called_demo_publish": true,
+          "tool_called_demo_check": false,
+          "gate_decision": "none",
+          "gate_reason": null,
+          "receipt": "valid",
+          "guard_connected": false,
+          "inspector_identity": "canonical",
+          "bound_calls": 1,
+          "session_models_used": [
+            "stub-local/stub-demo"
+          ],
+          "default_model_in_manifest": "ollama-local/gemma4:e2b"
+        },
+        "violations": [],
+        "runtime_probe": "FAIL",
+        "intended_fault_detected": true,
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T06:35:17.600Z"
+      },
+      "sessions": [
+        {
+          "file": "evidence/session-ses_f5712d5bbffekJ5tn91A1fPsE6.json",
+          "session_id": "ses_f5712d5bbffekJ5tn91A1fPsE6",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_sp8evn3z",
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
+      "gate_events": 0,
+      "receipt": true
+    },
+    {
+      "run_id": "D-2026-09-16_07-08-06",
+      "stage": "D",
+      "profile": "off",
+      "guard_connected": false,
+      "inspector_override": false,
+      "model_default": {
+        "provider": "ollama-local",
+        "id": "gemma4:e2b"
+      },
+      "verified": {
+        "stage": "D",
+        "facts": {
+          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "hash_invariant": true,
+          "unit_tests": "PASS",
+          "app_acceptance": "FAIL",
+          "acceptance_evidence": "runs/D-2026-09-16_07-08-06/evidence/acceptance-verify-1789542575224.json",
+          "tool_called_demo_publish": true,
+          "tool_called_demo_check": false,
+          "gate_decision": "none",
+          "gate_reason": null,
+          "receipt": "valid",
+          "guard_connected": false,
+          "inspector_identity": "canonical",
+          "bound_calls": 1,
+          "session_models_used": [
+            "stub-local/stub-demo"
+          ],
+          "default_model_in_manifest": "ollama-local/gemma4:e2b"
+        },
+        "violations": [],
+        "runtime_probe": "FAIL",
+        "intended_fault_detected": true,
+        "scenario_match": "PASS",
+        "verified_at": "2026-09-16T07:09:35.839Z"
+      },
+      "sessions": [
+        {
+          "file": "evidence/session-ses_f56f3c54bffesim83CRsaZ44oH.json",
+          "session_id": "ses_f56f3c54bffesim83CRsaZ44oH",
+          "provider": "stub-local",
+          "model": "stub-demo",
+          "tool_calls": [
+            {
+              "tool": "demo_publish",
+              "callID": "call_j1cthwjc",
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "models_used": [
+        "stub-local/stub-demo"
+      ],
+      "gate_events": 0,
+      "receipt": true
+    },
+    {
+      "run_id": "evid-1789542737929",
+      "sessions": [],
+      "models_used": [],
+      "gate_events": 0,
+      "receipt": false
+    },
+    {
+      "run_id": "fault-r1-a-no-evidence",
+      "stage": "A",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
+      "verified": {
+        "stage": "A",
+        "facts": {
+          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "hash_invariant": true,
+          "unit_tests": "PASS",
+          "app_acceptance": "FAIL",
+          "acceptance_evidence": "runs/fault-r1-a-no-evidence/evidence/acceptance-verify-1789539930212.json",
+          "tool_called_demo_publish": false,
+          "tool_called_demo_check": false,
+          "gate_decision": "none",
+          "gate_reason": null,
+          "receipt": "absent",
+          "guard_connected": true,
+          "inspector_identity": "canonical",
+          "bound_calls": 0,
+          "session_models_used": [],
+          "default_model_in_manifest": "undefined/undefined"
+        },
+        "violations": [
+          "INSPECTOR_IDENTITY_MISMATCH: manifest=undefined actual=82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828"
+        ],
+        "runtime_probe": "NOT_CALLED",
+        "intended_fault_detected": false,
+        "scenario_match": "FAIL",
+        "verified_at": "2026-09-16T06:25:30.827Z"
+      },
+      "sessions": [],
+      "models_used": [],
+      "gate_events": 0,
+      "receipt": false
+    },
+    {
+      "run_id": "fault-r1-b-foreign-receipt",
+      "stage": "B",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
+      "verified": {
+        "stage": "B",
+        "facts": {
+          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "hash_invariant": true,
+          "unit_tests": "PASS",
+          "app_acceptance": "FAIL",
+          "acceptance_evidence": "runs/fault-r1-b-foreign-receipt/evidence/acceptance-verify-1789539928616.json",
+          "tool_called_demo_publish": true,
+          "tool_called_demo_check": false,
+          "gate_decision": "blocked",
+          "gate_reason": "synthetic",
+          "receipt": "run_id mismatch OTHER-RUN-9999 != fault-r1-b-foreign-receipt; receipt session/call がこのrunの呼出し証拠に無い session=x call=y",
+          "guard_connected": true,
+          "inspector_identity": "canonical",
+          "bound_calls": 0,
+          "session_models_used": [],
+          "default_model_in_manifest": "undefined/undefined"
+        },
+        "violations": [
+          "INSPECTOR_IDENTITY_MISMATCH: manifest=undefined actual=82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828",
+          "GATE_CALL_UNBOUND: start session=synthetic call=synthetic はこのrunのsession証拠に存在しない",
+          "TRACE_CALL_UNBOUND: demo_publish session=synthetic call=synthetic はこのrunのsession証拠に存在しない",
+          "RECEIPT_INVALID: run_id mismatch OTHER-RUN-9999 != fault-r1-b-foreign-receipt; receipt session/call がこのrunの呼出し証拠に無い session=x call=y"
+        ],
+        "runtime_probe": "FAIL",
+        "intended_fault_detected": false,
+        "scenario_match": "FAIL",
+        "verified_at": "2026-09-16T06:25:29.225Z"
+      },
+      "sessions": [],
+      "models_used": [],
       "gate_events": 2,
-      "tool_calls": []
+      "receipt": true
     },
     {
-      "run_id": "D-2026-09-16_02-01-17",
+      "run_id": "fault-r1-b-hash-mismatch",
+      "stage": "B",
+      "profile": "on",
+      "guard_connected": true,
+      "inspector_override": false,
       "verified": {
-        "run_id": "D-2026-09-16_02-01-17",
-        "stage": "D",
-        "verified_at": "2026-09-16T02:01:31.761Z",
+        "stage": "B",
         "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+          "candidate_sha256_manifest": "0000000000000000000000000000000000000000000000000000000000000000",
           "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
+          "hash_invariant": false,
           "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/D-2026-09-16_02-01-17/evidence/acceptance-verify-1789524091129.json",
+          "app_acceptance": "ERROR",
+          "acceptance_evidence": "runs/fault-r1-b-hash-mismatch/evidence/acceptance-verify-1789539929411.json",
           "tool_called_demo_publish": true,
           "tool_called_demo_check": false,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "valid",
-          "guard_connected": false
+          "gate_decision": "blocked",
+          "gate_reason": "synthetic",
+          "receipt": "absent",
+          "guard_connected": true,
+          "inspector_identity": "canonical",
+          "bound_calls": 0,
+          "session_models_used": [],
+          "default_model_in_manifest": "undefined/undefined"
         },
-        "runtime_probe": "FAIL",
-        "scenario_match": "PASS"
+        "violations": [
+          "SNAPSHOT_CHANGED: 候補hashが起動時と不一致",
+          "INSPECTOR_IDENTITY_MISMATCH: manifest=undefined actual=82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828",
+          "GATE_CALL_UNBOUND: start session=synthetic call=synthetic はこのrunのsession証拠に存在しない",
+          "TRACE_CALL_UNBOUND: demo_publish session=synthetic call=synthetic はこのrunのsession証拠に存在しない",
+          "ACCEPTANCE_UNTRUSTED: CHECK_UNAVAILABLE: 検査が異常終了(exit=3)",
+          "ACCEPTANCE_ERROR: 受入検査自体が実行不能"
+        ],
+        "runtime_probe": "PASS",
+        "intended_fault_detected": false,
+        "scenario_match": "FAIL",
+        "verified_at": "2026-09-16T06:25:30.026Z"
       },
-      "gate_events": 0,
-      "tool_calls": [
-        {
-          "tool": "demo_publish",
-          "status": "completed",
-          "session": "session-ses_f580d9026ffedz19y477mR83T6.json"
-        }
-      ]
-    },
-    {
-      "run_id": "D-2026-09-16_02-17-10",
-      "verified": {
-        "run_id": "D-2026-09-16_02-17-10",
-        "stage": "D",
-        "verified_at": "2026-09-16T02:17:18.562Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/D-2026-09-16_02-17-10/evidence/acceptance-verify-1789525037936.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "valid",
-          "guard_connected": false
-        },
-        "runtime_probe": "FAIL",
-        "scenario_match": "PASS"
-      },
-      "gate_events": 0,
-      "tool_calls": [
-        {
-          "tool": "demo_publish",
-          "status": "completed",
-          "session": "session-ses_f57ff059bffethCsqDeILBt5M5.json"
-        }
-      ]
-    },
-    {
-      "run_id": "D-2026-09-16_02-18-54",
-      "verified": {
-        "run_id": "D-2026-09-16_02-18-54",
-        "stage": "D",
-        "verified_at": "2026-09-16T02:19:01.184Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/D-2026-09-16_02-18-54/evidence/acceptance-verify-1789525140562.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "valid",
-          "guard_connected": false
-        },
-        "runtime_probe": "FAIL",
-        "scenario_match": "PASS"
-      },
-      "gate_events": 0,
-      "tool_calls": [
-        {
-          "tool": "demo_publish",
-          "status": "completed",
-          "session": "session-ses_f57fd71a4ffe3jefnbyDTOg4T0.json"
-        }
-      ]
-    },
-    {
-      "run_id": "D-2026-09-16_02-48-41",
-      "verified": {
-        "run_id": "D-2026-09-16_02-48-41",
-        "stage": "D",
-        "verified_at": "2026-09-16T02:49:45.981Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/D-2026-09-16_02-48-41/evidence/acceptance-verify-1789526985320.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "valid",
-          "guard_connected": false
-        },
-        "runtime_probe": "FAIL",
-        "scenario_match": "PASS"
-      },
-      "gate_events": 0,
-      "tool_calls": []
+      "sessions": [],
+      "models_used": [],
+      "gate_events": 2,
+      "receipt": false
     }
   ]
 }

@@ -1,0 +1,8 @@
+{
+  "run_id": "C-2026-09-16_07-08-06",
+  "at": "2026-09-16T07:08:06.523Z",
+  "method": "presenter-applied",
+  "source": "versions/fixed/app",
+  "target": "<DEMO_ROOT>/workspace/registration-demo",
+  "note": "提示者がversions/fixedをworkspaceへ適用（反復実行の決定的修復経路。実モデル修復とは別記録）"
+}

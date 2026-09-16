@@ -1,0 +1,62 @@
+[
+  {
+    "id": "control-B",
+    "expected": "exit=0 scenario=PASS",
+    "ok": true,
+    "detail": "exit=0 scenario=PASS viol=[]"
+  },
+  {
+    "id": "control-C",
+    "expected": "exit=0 scenario=PASS",
+    "ok": true,
+    "detail": "exit=0 scenario=PASS viol=[]"
+  },
+  {
+    "id": "control-D",
+    "expected": "exit=0 scenario=PASS probe=FAIL(意図)",
+    "ok": true,
+    "detail": "exit=0 scenario=PASS probe=FAIL"
+  },
+  {
+    "id": "M1 B-foreign-session",
+    "expected": "exit!=0 scenario=FAIL（session同一性違反）",
+    "ok": true,
+    "detail": "exit=1 scenario=FAIL viol=[\"SESSION_RUN_MISMATCH: session-ses_f5712a1b2ffepeXIx2uy2Tk14Z.json の run_id=FOREIGN-RUN\",\"SESSION_ID_MISMATCH: session-ses_f5712a1b2ffepeXIx2uy2Tk14Z.json 内 session_id=ses_FOREIGN\",\"GATE_CALL_UNBOUND: start session=ses_"
+  },
+  {
+    "id": "M2 C-foreign-receipt-call",
+    "expected": "exit!=0 receipt無効・probe=FAIL",
+    "ok": true,
+    "detail": "exit=1 scenario=FAIL probe=FAIL receipt=receipt session/call がこのrunの呼出し証拠に無い session=ses_OTHER call=call_OTHER"
+  },
+  {
+    "id": "M3 B-manifest-run-id",
+    "expected": "exit!=0 scenario=FAIL（manifest同一性違反）",
+    "ok": true,
+    "detail": "exit=1 scenario=FAIL viol=[\"MANIFEST_RUN_ID_MISMATCH: manifest=OTHER-RUN actual=B-2026-09-16_06-35-17\"]"
+  },
+  {
+    "id": "M4a C-PASS-doc-exit3",
+    "expected": "exit!=0（PASS文書+異常終了は信用しない）",
+    "ok": true,
+    "detail": "exit=1 scenario=FAIL acc=ERROR viol=[\"ACCEPTANCE_UNTRUSTED: CHECK_UNAVAILABLE: 検査が異常終了(exit=3)\",\"ACCEPTANCE_ERROR: 受入検査自体が実行不能\"]"
+  },
+  {
+    "id": "M4b C-inspector-hash",
+    "expected": "exit!=0 INSPECTOR_IDENTITY_MISMATCH",
+    "ok": true,
+    "detail": "exit=1 viol=[\"INSPECTOR_IDENTITY_MISMATCH: manifest=0000000000000000000000000000000000000000000000000000000000000000 actual=82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828\"]"
+  },
+  {
+    "id": "M5 stale-pid-ownership",
+    "expected": "別プロジェクトのプロセスを停止しない",
+    "ok": true,
+    "detail": "legacy_alive=true newfmt_alive=true out=skip pid=56257 (B-2026-09-16_06-35-17/app-info.json): 所有照合情報なし — 停止しない | skip pid=56257 (B-2026-09-16_06-35-17/app-info.json): 実行ファイル不一致 — \"<HOME>/.local/share/mise/installs/node/24.17.0/bin/node /tmp/r3-mutations/foreign-proj/app/server.ts\""
+  },
+  {
+    "id": "M6 D-explain-no-evidence",
+    "expected": "未呼出時に「公開された」と表示しない",
+    "ok": true,
+    "detail": "probe=NOT_CALLED publishedClaim=false out_tail=  受入検査: 不合格 |   外側検証: probe=NOT_CALLED / シナリオ=FAIL |   要レビュー: 意図した故障実演の成立条件を満たしていません | ──────────────────────────────────────────"
+  }
+]

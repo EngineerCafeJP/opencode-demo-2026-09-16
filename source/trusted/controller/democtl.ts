@@ -84,9 +84,10 @@ function latestRun(stage?: string): string {
 // ベースはOS/nodeの動作に必要な最小限のみ。既存OpenCode設定・認証値・
 // プロキシ・プロバイダ変数・DEMO_* はここでは渡さず、明示するものだけ載せる。
 
+// SSH_AUTH_SOCK は教材の全役割で不要なため除外（検収R2-04）
 const ENV_BASE_ALLOWLIST = [
   "PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TERM", "TERM_PROGRAM",
-  "SHELL", "USER", "LOGNAME", "TMPDIR", "SSH_AUTH_SOCK",
+  "SHELL", "USER", "LOGNAME", "TMPDIR",
   "__CF_USER_TEXT_ENCODING", "SYSTEM_VERSION_COMPAT", "XPC_FLAGS", "XPC_SERVICE_NAME",
 ]
 
@@ -159,9 +160,11 @@ function guardHash(profile: string): string | null {
   return files.length ? fileHash(path.join(dir, files[0])) : null
 }
 
-function manifest(runId: string, stage: string, profile: string) {
+function manifest(runId: string, stage: string, profile: string, inspectorPath?: string) {
   const runDir = runDirOf(runId)
   const candidate = path.join(runDir, "candidate")
+  // R2-02: 実際に実行する検査器のidentityを記録する（差替え故障試験はoverrideとして明示）
+  const inspector = inspectorPath ? path.resolve(inspectorPath) : ACCEPTANCE
   return {
     run_id: runId,
     stage,
@@ -172,7 +175,9 @@ function manifest(runId: string, stage: string, profile: string) {
     opencode_acquisition: "official-distribution-binary",
     candidate_dir: candidate,
     candidate_sha256: dirHash(candidate),
-    acceptance_sha256: fileHash(ACCEPTANCE),
+    acceptance_sha256: fileHash(inspector),
+    acceptance_path: path.relative(ROOT, inspector),
+    inspector_override: inspector !== ACCEPTANCE,
     guard_sha256: guardHash(profile),
     tools_sha256: toolHashes(profile),
     guard_connected: guardHash(profile) !== null,
@@ -275,7 +280,7 @@ async function cmdServe(runId: string, profile: string, opts: { inspector?: stri
     detached: true,
     stdio: ["ignore", fd, fd],
   })
-  wj(path.join(runDir, "evidence", "launch-manifest.json"), manifest(runId, j(path.join(runDir, "evidence", "prepare.json")).stage, profile))
+  wj(path.join(runDir, "evidence", "launch-manifest.json"), manifest(runId, j(path.join(runDir, "evidence", "prepare.json")).stage, profile, inspector))
   await waitReady(port, child)
   const prev = existsSync(info) ? j(info) : { procs: [] }
   prev.pid = child.pid
@@ -283,7 +288,9 @@ async function cmdServe(runId: string, profile: string, opts: { inspector?: stri
   prev.profile = profile
   prev.url = `http://127.0.0.1:${port}`
   prev.started_at = now()
-  prev.procs = [...(prev.procs ?? []), { pid: child.pid, port, profile, started_at: now() }]
+  // R2-03: 停止時の所有照合情報（正規化済み実行ファイル・run・起動時刻）
+  prev.owner = { exe: realPath(BIN), run_dir: runDir, lstart: procLstart(child.pid!) }
+  prev.procs = [...(prev.procs ?? []), { pid: child.pid, port, profile, started_at: now(), owner: prev.owner }]
   wj(info, prev)
   child.unref()
   console.log(`serve up run=${runId} profile=${profile} url=http://127.0.0.1:${port} pid=${child.pid} log=${path.relative(ROOT, logFile)}`)
@@ -388,10 +395,11 @@ async function cmdApp(runId: string) {
     detached: true,
   })
   await new Promise((r) => setTimeout(r, 1200))
+  const script = realPath(path.join(runDir, "candidate", "app", "server.ts"))
   wj(path.join(runDir, "app-info.json"), {
     pid: child.pid, port, url: `http://127.0.0.1:${port}`, fixture, state_file: stateFile, started_at: now(),
-    // stop時の身元照合用（ stale PID 信頼しない ）
-    identity: `${path.join(runDir, "candidate", "app", "server.ts")}`,
+    // R2-03: stop時の所有照合（正規化絶対パス + run dir + 起動時刻）
+    owner: { exe: script, run_dir: runDir, lstart: procLstart(child.pid!) },
   })
   child.unref()
   console.log(`app up run=${runId} url=http://127.0.0.1:${port} fixture=${fixture}`)
@@ -582,24 +590,119 @@ function loadTrace(runDir: string) {
   return { self: calls, session: sessions }
 }
 
+// R2-01: run→session→call→gate→検査→receipt の同一試行対応を収集する。
+// 記録の存在ではなく、identity フィールドの相互一致を要求する。
+function collectEvidenceViolations(runId: string, runDir: string, man: Record<string, unknown>) {
+  const violations: string[] = []
+  const evDir = path.join(runDir, "evidence")
+
+  if (man.run_id !== runId) violations.push(`MANIFEST_RUN_ID_MISMATCH: manifest=${man.run_id} actual=${runId}`)
+  const prep = existsSync(path.join(evDir, "prepare.json")) ? j(path.join(evDir, "prepare.json")) : null
+  if (prep && prep.run_id !== runId) violations.push(`PREPARE_RUN_ID_MISMATCH: ${prep.run_id} != ${runId}`)
+
+  // 検査器identity: manifest記録の acceptance_path/hash と現在ファイルを照合（R2-02）
+  const inspectorFile = man.acceptance_path ? path.join(ROOT, man.acceptance_path as string) : ACCEPTANCE
+  if (!existsSync(inspectorFile) || fileHash(inspectorFile) !== man.acceptance_sha256) {
+    violations.push(`INSPECTOR_IDENTITY_MISMATCH: manifest=${man.acceptance_sha256} actual=${existsSync(inspectorFile) ? fileHash(inspectorFile) : "missing"}`)
+  }
+  // ガードidentity: manifest記録と現在の配備/正本を照合（offプロファイルはguard_sha256=nullで対象外）
+  if (man.guard_connected && man.guard_sha256) {
+    const deployed = path.join(PROFILES, String(man.profile), "plugin", "publish-guard.ts")
+    if (!existsSync(deployed) || fileHash(deployed) !== man.guard_sha256) {
+      violations.push(`GUARD_IDENTITY_MISMATCH: 配備 ${existsSync(deployed) ? fileHash(deployed) : "missing"} != manifest ${man.guard_sha256}`)
+    }
+    if (fileHash(GUARD_SRC) !== man.guard_sha256) {
+      violations.push(`GUARD_IDENTITY_MISMATCH: 正本 ${fileHash(GUARD_SRC)} != manifest ${man.guard_sha256}`)
+    }
+  }
+  // ツールidentity: manifest記録の tools_sha256 と現在の配備ファイルを照合（demo_check/demo_publish の差替え検出）
+  if (man.tools_sha256 && typeof man.tools_sha256 === "object") {
+    const toolDir = path.join(PROFILES, String(man.profile), "tool")
+    for (const [name, expected] of Object.entries(man.tools_sha256 as Record<string, string>)) {
+      const f = path.join(toolDir, name)
+      if (!existsSync(f) || fileHash(f) !== expected) {
+        violations.push(`TOOL_IDENTITY_MISMATCH: ${name} ${existsSync(f) ? fileHash(f) : "missing"} != manifest ${expected}`)
+      }
+    }
+  }
+
+  // session証拠: run_id がこのrunのものか・ファイル名と中身のsession_id一致
+  const sessionFiles = existsSync(evDir) ? readdirSync(evDir).filter((f) => f.startsWith("session-")) : []
+  const sessions = new Map<string, { run_id?: string; tool_calls: { tool?: string; callID?: string }[] }>()
+  for (const f of sessionFiles) {
+    const s = j(path.join(evDir, f))
+    if (s.run_id && s.run_id !== runId) violations.push(`SESSION_RUN_MISMATCH: ${f} の run_id=${s.run_id}`)
+    if (s.session_id && s.session_id !== f.replace(/^session-|\.json$/g, "")) {
+      violations.push(`SESSION_ID_MISMATCH: ${f} 内 session_id=${s.session_id}`)
+    }
+    if (s.session_id) sessions.set(s.session_id, s)
+  }
+  const callIndex = new Map<string, { session_id: string; tool?: string }>()
+  for (const [sid, s] of sessions) {
+    for (const c of s.tool_calls ?? []) if (c.callID) callIndex.set(`${sid}/${c.callID}`, { session_id: sid, tool: c.tool })
+  }
+
+  // gate-events の start/decision が実sessionのcallへ対応するか
+  const gateFile = path.join(evDir, "gate-events.jsonl")
+  const gateLines = existsSync(gateFile) ? readFileSync(gateFile, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)) : []
+  for (const g of gateLines.filter((l) => l.session_id || l.call_id)) {
+    if (!callIndex.has(`${g.session_id}/${g.call_id}`)) {
+      violations.push(`GATE_CALL_UNBOUND: ${g.phase} session=${g.session_id} call=${g.call_id} はこのrunのsession証拠に存在しない`)
+    }
+  }
+  // tool-trace のcallも実sessionへ対応
+  const traceFile = path.join(evDir, "tool-trace.jsonl")
+  const traceLines = existsSync(traceFile) ? readFileSync(traceFile, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)) : []
+  for (const t of traceLines.filter((l) => l.session_id || l.call_id)) {
+    if (!callIndex.has(`${t.session_id}/${t.call_id}`)) {
+      violations.push(`TRACE_CALL_UNBOUND: ${t.tool} session=${t.session_id} call=${t.call_id} はこのrunのsession証拠に存在しない`)
+    }
+  }
+  return { violations, sessions, callIndex, gateLines, traceLines }
+}
+
 async function cmdVerify(runId: string) {
   const runDir = runDirOf(runId)
+  // R2-01: runIdにはパスが渡ることがある（evid-test等）。identity比較は run dir 名で行う。
+  runId = path.basename(runDir)
   const candidate = path.join(runDir, "candidate")
   const man = j(path.join(runDir, "evidence", "launch-manifest.json"))
   const prep = j(path.join(runDir, "evidence", "prepare.json"))
   const stage: string = man.stage ?? prep.stage
 
   // 実測: 候補の現在hash・単体テスト・受入検査を外側から再実行
+  // R2-02: 検査器は manifest に記録されたもの（identity照合は collectEvidenceViolations が実施）。
+  // 正本固定ではなく記録済みの実在ファイルを実行することで、exit-status と文書の矛盾も検出できる。
+  const inspectorFile = man.acceptance_path ? path.join(ROOT, man.acceptance_path as string) : ACCEPTANCE
   const currentHash = dirHash(candidate)
   const unit = sh(NODE, ["--test", ...readdirSync(path.join(candidate, "tests", "unit")).filter((f) => f.endsWith(".test.ts")).map((f) => path.join(candidate, "tests", "unit", f))], { timeout: 60000, env: childEnv("test") })
   const accOut = path.join(runDir, "evidence", `acceptance-verify-${Date.now()}.json`)
-  const acc = sh(NODE, [ACCEPTANCE, "--target", candidate, "--case", "both", "--run-dir", runDir, "--out", accOut, "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000, env: childEnv("acceptance") })
-  const accReport = existsSync(accOut) ? j(accOut) : { verdict: "ERROR" }
+  const acc = sh(NODE, [inspectorFile, "--target", candidate, "--case", "both", "--run-dir", runDir, "--out", accOut, "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000, env: childEnv("acceptance") })
+  const accReport = existsSync(accOut) ? j(accOut) : null
+
+  // R2-01: 検査文書のverdictだけでなく、ガードと同一の厳格評価（終了状態・schema・必須case・hash）を外側でも使う
+  const { evaluateGateDecision } = await import(path.join(TRUSTED, "guard-source", "publish-guard.ts"))
+  const accEval = evaluateGateDecision(accReport, man.candidate_sha256, {
+    status: acc.status, signal: acc.signal as string | null, error: acc.error ? String(acc.error) : undefined,
+  })
+  const accDoc = accReport as { verdict?: string } | null
+  // FAIL文書は欠陥実測として有効。PASS文書だが評価が許可でない → 矛盾としてERROR扱い
+  const appAcc = accEval.allow ? "PASS" : accEval.reason.startsWith("ACCEPTANCE_FAIL") ? "FAIL" : "ERROR"
 
   const gate = loadGateDecision(runDir)
-  const trace = loadTrace(runDir)
-  const publishCalled = trace.session.some((t: { tool?: string }) => t.tool === "demo_publish") || trace.self.some((t) => t.tool === "demo_publish") || gate.tools.includes("demo_publish")
-  const checkCalled = trace.session.some((t: { tool?: string }) => t.tool === "demo_check") || trace.self.some((t) => t.tool === "demo_check") || gate.tools.includes("demo_check")
+  const { violations, callIndex, gateLines, traceLines } = collectEvidenceViolations(runId, runDir, man)
+  if (accEval.reason.startsWith("CHECK_UNAVAILABLE") || accEval.reason.startsWith("CHECK_SCHEMA") || accEval.reason.startsWith("CHECK_INCOMPLETE") || accEval.reason.startsWith("SNAPSHOT_MISMATCH") || accEval.reason.startsWith("INSPECTOR")) {
+    violations.push(`ACCEPTANCE_UNTRUSTED: ${accEval.reason}`)
+  }
+
+  const publishCalled =
+    traceLines.some((t) => t.tool === "demo_publish") ||
+    gateLines.some((l) => l.tool === "demo_publish") ||
+    [...callIndex.values()].some((c) => c.tool === "demo_publish")
+  const checkCalled =
+    traceLines.some((t) => t.tool === "demo_check") ||
+    gateLines.some((l) => l.tool === "demo_check") ||
+    [...callIndex.values()].some((c) => c.tool === "demo_check")
 
   const receiptPath = path.join(runDir, "publish", "receipt.json")
   const receiptPresent = existsSync(receiptPath)
@@ -610,10 +713,13 @@ async function cmdVerify(runId: string) {
     if (r.run_id !== runId) problems.push(`run_id mismatch ${r.run_id} != ${runId}`)
     if (r.candidate_sha256 !== man.candidate_sha256) problems.push("receipt hash != manifest hash")
     if (r.candidate_sha256 !== currentHash) problems.push("receipt hash != current candidate hash")
+    // receiptのsession/callがこのrunのdemo_publish実呼出しへ対応するか（R2-01）
+    const bound = callIndex.get(`${r.session_id}/${r.call_id}`)
+    if (!bound) problems.push(`receipt session/call がこのrunの呼出し証拠に無い session=${r.session_id} call=${r.call_id}`)
+    else if (bound.tool !== "demo_publish") problems.push(`receipt call ${r.call_id} のtool=${bound.tool}`)
     receipt = problems.length ? { valid: false, reason: problems.join("; "), data: r } : { valid: true, data: r }
   }
 
-  const appAcc = accReport.verdict as string
   const sessionModels = [...new Set(
     readdirSync(path.join(runDir, "evidence")).filter((f) => f.startsWith("session-"))
       .map((f) => { const s = j(path.join(runDir, "evidence", f)); return `${s.provider}/${s.model}` }),
@@ -631,6 +737,7 @@ async function cmdVerify(runId: string) {
     receiptPresent,
     receiptValid: receipt.valid,
     receiptReason: receipt.reason ?? null,
+    evidenceViolations: violations,
   })
 
   const report = {
@@ -648,6 +755,8 @@ async function cmdVerify(runId: string) {
       gate_reason: gate.reason ?? null,
       receipt: receipt.valid ? "valid" : receipt.reason,
       guard_connected: man.guard_connected,
+      inspector_identity: man.inspector_override ? `override:${man.acceptance_path}` : "canonical",
+      bound_calls: callIndex.size,
       session_models_used: sessionModels,
       default_model_in_manifest: `${man.model_default?.provider ?? man.model?.provider}/${man.model_default?.id ?? man.model?.id}`,
     },
@@ -689,7 +798,11 @@ function mkRun(base: string, name: string, stage: string, version: "broken" | "f
   mkdirSync(path.join(dir, "publish"), { recursive: true })
   const man = {
     run_id: name, stage, candidate_sha256: dirHash(path.join(dir, "candidate")),
+    profile: guard ? "on" : "off",
     guard_connected: guard, tool_dir: path.relative(ROOT, path.join(TRUSTED, "tools")),
+    // R2-02: 検査器identityを記録（collectEvidenceViolations が照合する）
+    acceptance_sha256: fileHash(ACCEPTANCE), acceptance_path: path.relative(ROOT, ACCEPTANCE), inspector_override: false,
+    guard_sha256: guard ? fileHash(GUARD_SRC) : null,
     model_default: { provider: "stub-local", id: "stub-demo" }, model: { provider: "stub-local", id: "stub-demo" },
     launched_at: now(),
   }
@@ -837,15 +950,20 @@ async function cmdDoctor() {
       diffs.length === 0 ? `${Object.keys(cur.config_files).length} files identical (baseline ${base.captured_at})` : `DIFFS: ${diffs.join(", ")}`)
   }
 
-  // 分離の実効確認: 合成マーカーを親envへ注入しても子envへ漏れないこと（検収F03の自己検査）
+  // 分離の実効確認: 合成マーカーを親envへ注入し、実子プロセスのenvを直接検査する（検収R2-04）。
+  // envオブジェクトの検査ではなく、spawnした実プロセスが報告する環境を見る。値は記録せず名前の有無だけ。
   const SENTINELS = ["DEMO_SENTINEL_CFG", "OPENCODE_CONFIG_CONTENT", "DEMO_SENTINEL_KEY", "AIDD_MARKER_TEST"]
   const saved: Record<string, string | undefined> = {}
   for (const k of SENTINELS) { saved[k] = process.env[k]; process.env[k] = "SENTINEL-LEAK-CHECK" }
-  const probe = childEnv("opencode", { DEMO_RUN_DIR: "/x" })
+  const leaks: string[] = []
+  for (const kind of ["opencode", "app", "acceptance", "capture", "stub"] as const) {
+    const r = sh("env", [], { env: childEnv(kind, kind === "opencode" ? { DEMO_RUN_DIR: "/x" } : {}), timeout: 10000 })
+    const present = new Set((r.stdout ?? "").split("\n").map((l) => l.split("=")[0]))
+    for (const k of SENTINELS) if (present.has(k)) leaks.push(`${kind}:${k}`)
+  }
   for (const k of SENTINELS) { if (saved[k] === undefined) delete process.env[k]; else process.env[k] = saved[k] }
-  const leaked = SENTINELS.filter((k) => probe[k] === "SENTINEL-LEAK-CHECK")
-  add("child env allowlist (no parent markers)", leaked.length === 0,
-    leaked.length === 0 ? `${Object.keys(probe).length} vars allowlisted, 4 sentinels blocked` : `LEAKED: ${leaked.join(",")}`)
+  add("child env allowlist (real child process probe)", leaks.length === 0,
+    leaks.length === 0 ? `5 kinds probed via spawned env, 4 sentinels absent` : `LEAKED: ${leaks.join(",")}`)
 
   const pwCache = path.join(process.env.HOME ?? "", "Library", "Caches", "ms-playwright")
   add("playwright browser cache (read-only reference)", existsSync(pwCache), existsSync(pwCache) ? readdirSync(pwCache).filter((d) => d.startsWith("chromium")).join(", ") : "absent")
@@ -878,12 +996,50 @@ function procIdentity(pid: number): string {
   return (r.stdout ?? "").trim()
 }
 
-function killIfOwned(pid: number, expectRe: RegExp, label: string): boolean {
+// プロセス起動時刻（PID再利用の検出用）
+function procLstart(pid: number): string | null {
+  const r = sh("ps", ["-p", String(pid), "-o", "lstart="], { timeout: 10000, env: childEnv("test") })
+  const s = (r.stdout ?? "").trim()
+  return s || null
+}
+
+// プロセスのcwd（argvにrun_dirを含まないserve等の所有確認用）
+function procCwd(pid: number): string | null {
+  const r = sh("lsof", ["-a", "-p", String(pid), "-d", "cwd", "-Fn"], { timeout: 10000, env: childEnv("test") })
+  const m = (r.stdout ?? "").split("\n").find((l) => l.startsWith("n"))
+  return m ? m.slice(1) : null
+}
+
+function realPath(p: string): string {
+  try { return realpathSync(p) } catch { return path.resolve(p) }
+}
+
+// R2-03: 部分一致ではなく、正規化済み絶対パス + 起動時刻で所有を確認する。
+// owner: { exe: このデモが実行したファイルの正規化絶対パス, run_dir: 対象run, lstart: 起動時ps lstart }
+// いずれか確認できない/不一致なら停止しない。
+function killIfOwned(pid: number, owner: { exe: string; run_dir?: string; lstart?: string | null }, label: string): boolean {
   const cmdline = procIdentity(pid)
   if (!cmdline) return false // 既に終了
-  if (!expectRe.test(cmdline)) {
-    console.log(`skip pid=${pid} (${label}): identity mismatch — "${cmdline.slice(0, 120)}"`)
+  if (!cmdline.includes(owner.exe)) {
+    console.log(`skip pid=${pid} (${label}): 実行ファイル不一致 — "${cmdline.slice(0, 120)}"`)
     return false
+  }
+  if (owner.run_dir) {
+    // argv に run_dir が無い起動（serve）は cwd で照合する
+    const inArgv = cmdline.includes(owner.run_dir)
+    const cwd = procCwd(pid)
+    const inCwd = cwd === owner.run_dir || (cwd !== null && cwd.startsWith(owner.run_dir + path.sep))
+    if (!inArgv && !inCwd) {
+      console.log(`skip pid=${pid} (${label}): 対象runの記録なし（argv/cwd不一致） — "${cmdline.slice(0, 120)}" cwd=${cwd}`)
+      return false
+    }
+  }
+  if (owner.lstart) {
+    const cur = procLstart(pid)
+    if (cur !== owner.lstart) {
+      console.log(`skip pid=${pid} (${label}): 起動時刻不一致（PID再利用の可能性） "${cur}" != "${owner.lstart}"`)
+      return false
+    }
   }
   try {
     process.kill(pid, "SIGTERM")
@@ -902,7 +1058,8 @@ async function cmdStub(action: string) {
   if (action === "stop") {
     if (existsSync(STUB_INFO)) {
       const info = j(STUB_INFO)
-      if (info.pid) killIfOwned(info.pid, /stub-llm\/server\.ts/, "stub")
+      const owner = info.owner ?? { exe: realPath(STUB_LLM), lstart: info.lstart ?? null }
+      if (info.pid) killIfOwned(info.pid, owner, "stub")
       rmSync(STUB_INFO, { force: true })
     }
     if (await stubHealthy()) console.log("warning: stub still responding (not owned by this demo — left running)")
@@ -925,7 +1082,10 @@ async function cmdStub(action: string) {
   const deadline = Date.now() + 10000
   while (Date.now() < deadline) {
     if (await stubHealthy()) {
-      wj(STUB_INFO, { pid: child.pid, port: STUB_PORT, script: STUB_LLM, started_at: now(), owned_by: "democtl" })
+      wj(STUB_INFO, {
+        pid: child.pid, port: STUB_PORT, script: STUB_LLM, started_at: now(), owned_by: "democtl",
+        owner: { exe: realPath(STUB_LLM), lstart: procLstart(child.pid!) },
+      })
       child.unref()
       console.log(`stub up pid=${child.pid} http://127.0.0.1:${STUB_PORT}`)
       return
@@ -1025,13 +1185,24 @@ function cmdExplain(runId: string) {
   console.log(`  状態 ${stage} / run: ${runId}`)
   console.log("──────────────────────────────────────────")
   if (stage === "D") {
-    console.log("  安全装置の確認: 失敗")
-    console.log("    未修正のアプリが、模擬公開されてしまいました。")
-    console.log(`    （ガード接続: ${f.guard_connected ? "あり" : "なし"} / receipt: ${f.receipt}）`)
-    console.log("")
-    console.log(`  故障を見つける実験: ${v.runtime_probe === "FAIL" ? "成功" : "失敗"}`)
-    console.log("    安全装置が働いていないことを検出できました。")
-    console.log(`    （外側検証 runtime_probe=${v.runtime_probe}）`)
+    // R2-05: 断定文は実測条件が成立した場合だけ出す（未呼出・証拠不足・不整合はそのまま表示）
+    const publishedUnsafe = f.tool_called_demo_publish === true && f.receipt === "valid" && f.app_acceptance === "FAIL" && v.runtime_probe === "FAIL"
+    if (publishedUnsafe && v.scenario_match === "PASS") {
+      console.log("  安全装置の確認: 失敗")
+      console.log("    未修正のアプリが、模擬公開されてしまいました。")
+      console.log(`    （ガード接続: ${f.guard_connected ? "あり" : "なし"} / receipt: ${f.receipt}）`)
+      console.log("")
+      console.log("  故障を見つける実験: 成功")
+      console.log("    安全装置が働いていないことを検出できました。")
+      console.log(`    （外側検証 runtime_probe=${v.runtime_probe}）`)
+    } else {
+      const jp: Record<string, string> = { PASS: "合格", FAIL: "不合格", NOT_CALLED: "未呼出", ERROR: "実行不能", NOT_OBSERVED: "未観測", valid: "有効", absent: "なし" }
+      console.log(`  公開試行: ${f.tool_called_demo_publish ? "記録あり" : "記録なし（未実行）"}`)
+      console.log(`  公開記録(receipt): ${jp[f.receipt as string] ?? f.receipt}`)
+      console.log(`  受入検査: ${jp[f.app_acceptance as string] ?? f.app_acceptance}`)
+      console.log(`  外側検証: probe=${v.runtime_probe} / シナリオ=${v.scenario_match}`)
+      console.log("  要レビュー: 意図した故障実演の成立条件を満たしていません")
+    }
   } else {
     const jp: Record<string, string> = { PASS: "合格", FAIL: "不合格", NOT_CALLED: "未呼出", ERROR: "実行不能", NOT_OBSERVED: "未観測" }
     console.log(`  受入検査: ${jp[f.app_acceptance as string] ?? f.app_acceptance}`)
@@ -1052,24 +1223,34 @@ function cmdExplain(runId: string) {
 // ---------- stop ----------
 
 function cmdStop(runId?: string) {
-  const ids = runId ? [runId] : readdirSync(RUNS).filter((d) => statSync(path.join(RUNS, d), { throwIfNoEntry: false })?.isDirectory())
-  for (const id of ids) {
-    const dir = path.join(RUNS, id)
+  // 単run指定は verify と同様に run名 or 直接パスを受ける（evid-test/変異検証の合成run用）
+  const dirs = runId
+    ? [[path.basename(runDirOf(runId)), runDirOf(runId)] as const]
+    : readdirSync(RUNS).filter((d) => statSync(path.join(RUNS, d), { throwIfNoEntry: false })?.isDirectory()).map((d) => [d, path.join(RUNS, d)] as const)
+  for (const [id, dir] of dirs) {
     for (const f of ["serve-info.json", "app-info.json"]) {
       const p = path.join(dir, f)
       if (!existsSync(p)) continue
       const info = j(p)
-      const pids = [...new Set([info.pid, ...(info.procs ?? []).map((x: { pid: number }) => x.pid)].filter(Boolean))]
-      const expect = f === "serve-info.json" ? /bin\/opencode serve|opencode serve/ : /app\/server\.ts/
-      for (const pid of pids) {
-        killIfOwned(pid, expect, `${id}/${f}`)
+      const defaultExe = f === "serve-info.json" ? realPath(BIN) : realPath(path.join(dir, "candidate", "app", "server.ts"))
+      const seenPid = new Set<number>()
+      for (const proc of [{ pid: info.pid, owner: info.owner }, ...(info.procs ?? [])]) {
+        if (!proc.pid || seenPid.has(proc.pid)) continue
+        seenPid.add(proc.pid)
+        // 旧形式（owner未記録）は run_dir も要求できないため実行ファイル+起動時刻のみ照合。
+        // それすら記録が無い場合は停止しない（所有不明は殺さない）。
+        const owner = proc.owner ?? (info.lstart ? { exe: defaultExe, lstart: info.lstart } : null)
+        if (!owner) { console.log(`skip pid=${proc.pid} (${id}/${f}): 所有照合情報なし — 停止しない`); continue }
+        killIfOwned(proc.pid, { exe: owner.exe ?? defaultExe, run_dir: owner.run_dir, lstart: owner.lstart }, `${id}/${f}`)
       }
     }
   }
   // デモ所有の stub は stop --all 相当で畳む（個別run指定時は止めない）
   if (!runId && existsSync(STUB_INFO)) {
     const info = j(STUB_INFO)
-    if (info.pid) killIfOwned(info.pid, /stub-llm\/server\.ts/, "stub")
+    const owner = info.owner ?? null
+    if (info.pid && owner) killIfOwned(info.pid, owner, "stub")
+    else if (info.pid) console.log(`skip pid=${info.pid} (stub): 所有照合情報なし — 停止しない`)
     rmSync(STUB_INFO, { force: true })
   }
 }

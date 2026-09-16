@@ -24,10 +24,14 @@ runごとに `runs/<id>/private/` 配下へ専用領域を作り、次を設定�
 
 ### 子プロセス環境は allowlist（F03対応）
 
-serve/app/acceptance/capture の全子プロセスは `childEnv()` が作る**許可リストのみ**の環境で起動。
-親の `process.env` を丸ごと継承しないため、`OPENCODE_CONFIG_CONTENT`・`ANTHROPIC_API_KEY` 等の
-既存設定・認証系変数は子へ届きません。`democtl doctor` が合成マーカーを注入して漏洩がないことを
-**実測**します（`12 vars allowlisted, 4 sentinels blocked`）。
+serve/app/acceptance/capture/stub の全子プロセスは `childEnv()` が作る**許可リストのみ**の環境で起動
+（ブラウザも `chromium.launch({env: ...})` で明示）。親の `process.env` を丸ごと継承しないため、
+`OPENCODE_CONFIG_CONTENT`・`ANTHROPIC_API_KEY`・プロキシ・`AIDD_*`・`SSH_AUTH_SOCK` 等の
+既存設定・認証系変数は子へ届きません。`democtl doctor` が合成マーカー4個を注入し、
+**実spawnした子プロセス（envコマンド）が報告する環境を直接検査**して漏洩がないことを実測します
+（5種の子プロセスkind × 4マーカーで全てabsent）。Terminal窓内シェルは起動時にdeny変数の
+**有無のみ**点検し、値は記録しません（漏洩時はfail-closed）。SSH_AUTH_SOCK はGUIセッション由来で
+常時存在するためTerminal点検対象外と明記しています（子プロセスへの伝搬は依然deny）。
 
 実測: 起動で生成された保存先はすべて `private-runtime/` or `runs/<id>/private/` 配下。既存
 `~/.config/opencode` は `trusted/baseline/existing-config.json`（1138ファイルのhash台帳）と
@@ -45,6 +49,7 @@ serve/app/acceptance/capture の全子プロセスは `childEnv()` が作る**�
 - **全caseが個別にPASS**（aggregate PASSと個別FAILの混在は拒否）
 - report-level verdict=PASS
 - target hash = manifest hash一致・launch-manifest存在・candidate snapshot不変
+- **検査器identity**: 実行直前に `manifest.acceptance_sha256` と実ファイルのsha256を照合（不一致は INSPECTOR_IDENTITY_MISMATCH で遮断）。外側検証でも同照合＋tools_sha256照合を実施
 
 `source/trusted/guard-source/publish-guard.ts`（本体）と `profiles/on/plugin/publish-guard.ts`（配備）は同一物。
 外側検証は `source/trusted/controller/verify-core.mjs` — **実CLI `democtl verify` と試験が同一実装**を使い、
@@ -69,7 +74,7 @@ FAIL時はexit≠0。
 
 ## 撮影環境
 
-- Playwright 1.57.x + Chromium 143.0.7499.4（build 1200）を `private-runtime/pw-browsers` に専用設置（既存 `~/Library/Caches/ms-playwright` は読み取りのみ・非適合revのため不使用）
+- Playwright **1.57.0**（lockfile: `trusted/capture/package-lock.json` sha256=cdf71167…）。要求rev `chromium_headless_shell-1200` が未キャッシュのため、実行時は共有キャッシュ `~/Library/Caches/ms-playwright` の `chromium_headless_shell-1228` へ **executablePath フォールバック**で実測（ダウンロード経路が不安定だったため。他端末では `npx playwright install` が必要な場合あり — LIM-06）
 - 端末: Terminal.app実窓 + `screencapture -l<CGWindowID>`（画面収録権限付与済み・Swift CGWindowList optionAll で窓ID特定）
 - ブラウザshotsはheadless Chromium・viewport 1920×1080・deviceScaleFactor 1
 - OpenCode画面の session は `evidence/session-*.json` に記録（run・session・tool呼出・応答）

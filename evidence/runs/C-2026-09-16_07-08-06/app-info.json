@@ -1,0 +1,13 @@
+{
+  "pid": 86833,
+  "port": 65070,
+  "url": "http://127.0.0.1:65070",
+  "fixture": "full",
+  "state_file": "<DEMO_ROOT>/runs/C-2026-09-16_07-08-06/runtime/ui-state.json",
+  "started_at": "2026-09-16T07:08:45.906Z",
+  "owner": {
+    "exe": "<DEMO_ROOT>/runs/C-2026-09-16_07-08-06/candidate/app/server.ts",
+    "run_dir": "<DEMO_ROOT>/runs/C-2026-09-16_07-08-06",
+    "lstart": "Wed Sep 16 16:08:44 2026"
+  }
+}

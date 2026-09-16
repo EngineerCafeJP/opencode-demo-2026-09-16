@@ -1,0 +1,8 @@
+{
+  "tool": "acceptance",
+  "case": "both",
+  "verdict": "ERROR",
+  "error": "INSPECTOR_UNAVAILABLE(synthetic): 検査器が結果を生成できません",
+  "cases": [],
+  "at": "2026-09-16T06:36:42.057Z"
+}

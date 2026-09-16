@@ -2,7 +2,10 @@
 // このテストは OpenCode への接続有無に関係なく実行できる（D状態でも合格する）。
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import guard, { evaluateGateDecision } from "./publish-guard.ts"
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, rmSync } from "node:fs"
+import { tmpdir } from "node:os"
+import path from "node:path"
+import guard, { evaluateGateDecision, dirHash as dirHashForTest } from "./publish-guard.ts"
 
 const HASH = "a".repeat(64)
 const OK_RUN = { status: 0 }
@@ -118,4 +121,44 @@ test("demo_publish 以外のツール呼出しは素通し", async () => {
   const hooks = await guard.server({} as never)
   const before = hooks["tool.execute.before"]!
   await before({ tool: "read", sessionID: "s", callID: "c" }, { args: {} })
+})
+
+test("実hook経路: manifestの検査器hash不一致 → 遮断（検収R2-02）", async () => {
+  // 起動記録の acceptance_sha256 が実ファイルと違う = 検査器差替え → 実行前に遮断
+  const dir = mkdtempSync(path.join(tmpdir(), "guard-ident-"))
+  const runDir = path.join(dir, "run")
+  const candidate = path.join(runDir, "candidate")
+  mkdirSync(path.join(runDir, "evidence"), { recursive: true })
+  mkdirSync(candidate, { recursive: true })
+  writeFileSync(path.join(candidate, "app.ts"), "x")
+  const inspector = path.join(dir, "fake-acceptance.ts")
+  writeFileSync(inspector, "// fake inspector")
+  const manifest = {
+    candidate_sha256: dirHashForTest(candidate),
+    acceptance_sha256: "0".repeat(64), // 実ファイルと意図的に不一致
+  }
+  writeFileSync(path.join(runDir, "evidence", "launch-manifest.json"), JSON.stringify(manifest))
+  const saved = { DEMO_RUN_DIR: process.env.DEMO_RUN_DIR, DEMO_CANDIDATE_DIR: process.env.DEMO_CANDIDATE_DIR, DEMO_ACCEPTANCE: process.env.DEMO_ACCEPTANCE, DEMO_NODE: process.env.DEMO_NODE, DEMO_FIXTURES: process.env.DEMO_FIXTURES }
+  process.env.DEMO_RUN_DIR = runDir
+  process.env.DEMO_CANDIDATE_DIR = candidate
+  process.env.DEMO_ACCEPTANCE = inspector
+  process.env.DEMO_NODE = process.execPath
+  try {
+    const hooks = await guard.server({} as never)
+    const before = hooks["tool.execute.before"]!
+    await assert.rejects(
+      () => before({ tool: "demo_publish", sessionID: "s", callID: "c" }, { args: {} }),
+      /INSPECTOR_IDENTITY_MISMATCH/,
+    )
+    const events = readFileSync(path.join(runDir, "evidence", "gate-events.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l))
+    const dec = events.find((e) => e.phase === "decision")
+    assert.equal(dec?.decision, "blocked")
+    assert.match(dec?.reason ?? "", /INSPECTOR_IDENTITY_MISMATCH/)
+    assert.equal(dec?.session_id, "s") // decision側にもidentityが残る
+    assert.equal(dec?.call_id, "c")
+    assert.equal(existsSync(path.join(runDir, "publish", "receipt.json")), false)
+  } finally {
+    for (const [k, v] of Object.entries(saved)) { if (v === undefined) delete process.env[k]; else process.env[k] = v }
+    rmSync(dir, { recursive: true, force: true })
+  }
 })

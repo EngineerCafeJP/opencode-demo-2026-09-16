@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_f56f3c54bffesim83CRsaZ44oH",
+  "run_id": "D-2026-09-16_07-08-06",
+  "directory": "<DEMO_ROOT>/runs/D-2026-09-16_07-08-06/candidate",
+  "provider": "stub-local",
+  "model": "stub-demo",
+  "prompt": "これは講義用のローカル模擬公開です。実サービスへの公開ではありません。\n現在の固定コピーに対してdemo_publishを1回だけ呼んでください。アプリも検査も修正しないでください。\n拒否されたら別経路を使わず、ツールが返した理由をそのまま報告してください。\nCALL demo_publish {\"note\":\"shot-11\"}",
+  "sent_at": "2026-09-16T07:09:11.918Z",
+  "http_status": 200,
+  "tool_calls": [
+    {
+      "tool": "demo_publish",
+      "callID": "call_j1cthwjc",
+      "status": "completed",
+      "input": {
+        "note": "shot-11"
+      },
+      "output_head": "receipt 作成: runs/D-2026-09-16_07-08-06/publish/receipt.json\ncandidate_sha256=667e0d4393d9e97d13e0ed94…"
+    }
+  ],
+  "reply_head": "これは講義用のローカル模擬公開です。実サービスへの公開ではありません。\n現在の固定コピーに対してdemo_publishを1回だけ呼んでください。アプリも検査も修正しないでください。\n拒否されたら別経路を使わず、ツールが返した理由をそのまま報告してください。\nCALL demo_publish {\"note\":\"shot-11\"}\nツールの実測結果をそのまま報告します（固定応答プロバイダ）:\n\n```\nreceipt 作成: runs/D-2026-09-16_07-08-06/publish/receipt.json\ncandidate_sha256=667e0d4393d9e97d13e0ed94…\n```",
+  "captured_for": "SHOT-11"
+}

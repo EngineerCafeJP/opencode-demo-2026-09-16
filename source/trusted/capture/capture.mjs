@@ -48,14 +48,17 @@ function argOf(name) {
   return i >= 0 ? process.argv[i + 1] : undefined
 }
 
-// 検収F03: capture が起こす子プロセスも親envを丸ごと継承しない
+// 検収F03/R2-04: capture が起こす子プロセスも親envを丸ごと継承しない。
+// さらに起動入口で deny 系を自プロセスenvから除去し、env未指定の経路へも漏れないようにする。
 const ENV_BASE_ALLOWLIST = [
   "PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TERM", "TERM_PROGRAM",
-  "SHELL", "USER", "LOGNAME", "TMPDIR", "SSH_AUTH_SOCK",
+  "SHELL", "USER", "LOGNAME", "TMPDIR",
   "__CF_USER_TEXT_ENCODING", "SYSTEM_VERSION_COMPAT", "XPC_FLAGS", "XPC_SERVICE_NAME",
   "PLAYWRIGHT_BROWSERS_PATH", // capture専用のブラウザキャッシュ指定のみ許可
 ]
-const ENV_DENY = /^(OPENCODE_CONFIG_CONTENT|.*_API_KEY|.*_TOKEN|.*_SECRET|.*_PASSWORD|HTTP_PROXY|HTTPS_PROXY|ALL_PROXY|ANTHROPIC_|OPENAI_|GEMINI_|GOOGLE_|AWS_|AZURE_|AIDD_)/i
+const ENV_DENY = /^(OPENCODE_CONFIG_CONTENT|.*_API_KEY|.*_TOKEN|.*_SECRET|.*_PASSWORD|HTTP_PROXY|HTTPS_PROXY|ALL_PROXY|ANTHROPIC_|OPENAI_|GEMINI_|GOOGLE_|AWS_|AZURE_|AIDD_|SSH_AUTH_SOCK)/i
+
+for (const k of Object.keys(process.env)) if (ENV_DENY.test(k)) delete process.env[k]
 
 function childEnv(extra = {}) {
   const env = {}
@@ -65,6 +68,25 @@ function childEnv(extra = {}) {
   }
   for (const [k, v] of Object.entries(extra)) if (!ENV_DENY.test(k)) env[k] = v
   return env
+}
+
+// Playwright が要求するブラウザrevが未キャッシュの場合、キャッシュ済みの最新
+// headless shell へフォールバックする（撮影用途ではrev差異を許容）。
+async function launchBrowser() {
+  try {
+    return await chromium.launch({ headless: true, env: childEnv() })
+  } catch (e) {
+    const cache = path.join(process.env.HOME ?? "", "Library", "Caches", "ms-playwright")
+    const shells = existsSync(cache) ? readdirSync(cache).filter((d) => d.startsWith("chromium_headless_shell-")).sort().reverse() : []
+    for (const d of shells) {
+      const exe = path.join(cache, d, "chrome-headless-shell-mac-arm64", "chrome-headless-shell")
+      if (existsSync(exe)) {
+        console.log(`browser fallback: ${d} (要求rev未キャッシュのため executablePath 指定)`)
+        return await chromium.launch({ headless: true, env: childEnv(), executablePath: exe })
+      }
+    }
+    throw e
+  }
 }
 
 function sh(cmd, args, opts = {}) {
@@ -216,9 +238,12 @@ async function shotDone(browser, spec) {
   } else {
     d = capture(out)
   }
+  // R2-05: warn継続で撮れた画像は指定場面の成立とは別状態にする
+  const unmet = typeof spec.verify === "function" ? spec.verify() : []
   record({
     shot_id: shot,
-    status: "CAPTURED",
+    status: unmet.length ? "CAPTURED_NEEDS_REVIEW" : "CAPTURED",
+    review_notes: unmet.length ? unmet : undefined,
     captured_at: nowIso(),
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     screen_type: kind,
@@ -363,7 +388,7 @@ SCENES["SHOT-04"] = async (ctx) => {
 }
 
 // OpenCode Web UI セッション撮影の共通処理
-async function ocSessionShot(ctx, { run, profile, directory, prompt, provider, model, waitText, expand, shot, file, claims, notClaimed, evidence, slide, zoom = 1.35 }) {
+async function ocSessionShot(ctx, { run, profile, directory, prompt, provider, model, waitText, expand, shot, file, claims, notClaimed, evidence, slide, zoom = 1.35, verify }) {
   democtl(`serve ${run}`, ["--profile", profile])
   const info = serveInfo(run)
   const sess = await runSession({ runId: run, directory, prompt, provider, model, shotId: shot })
@@ -373,6 +398,7 @@ async function ocSessionShot(ctx, { run, profile, directory, prompt, provider, m
     claims, notClaimed,
     evidence: [...evidence, `runs/${run}/evidence/session-${sess.sessionID}.json`],
     slide,
+    verify: verify ? () => verify(sess) : undefined,
     capture: async (browser, out) => {
       const page = await browser.newPage({ viewport: VIEWPORT, deviceScaleFactor: 1 })
       await page.goto(legacy, { waitUntil: "domcontentloaded", timeout: 30000 })
@@ -421,6 +447,8 @@ SCENES["SHOT-05"] = async (ctx) => {
     notClaimed: ["この表示だけで公開可否が決まること"],
     evidence: [`runs/${run}/evidence/`],
     slide: "10",
+    // 実測条件: demo_check が実sessionで呼ばれた記録がある時だけ場面成立
+    verify: (s) => (s.tools.some((t) => t.tool === "demo_check") ? [] : ["demo_check tool call not observed in session trace"]),
   })
   const called = sess.tools.some((t) => t.tool === "demo_check")
   if (!called) console.log(`  [warn] SHOT-05: demo_check tool call not observed in session trace`)
@@ -439,12 +467,16 @@ SCENES["SHOT-06"] = async (ctx) => {
   democtl(`serve ${run}`, ["--profile", "on"])
   const sess = await runSession({ runId: run, directory, prompt, provider: "stub-local", model: "stub-demo", shotId: "SHOT-06" })
   const blocked = sess.tools.some((t) => t.tool === "demo_publish" && t.status === "error")
-  if (!blocked) console.log(`  [warn] SHOT-06: demo_publish not observed as blocked`)
   // 2) 外側検証を先に実走行（explainが読む outer-verification.json を生成）
   try { democtl(`verify ${run}`) } catch { /* verify FAILでも撮影は継続（表示が目的） */ }
-  const receipt = existsSync(path.join(RUNS, run, "publish", "receipt.json"))
-  if (receipt) console.log(`  [warn] SHOT-06: receipt exists (unexpected)`)
-  // 3) 実証拠を端末で表示: ガード判定 + 公開記録ディレクトリ + explain
+  const receiptExists = existsSync(path.join(RUNS, run, "publish", "receipt.json"))
+  const gateFile = path.join(RUNS, run, "evidence", "gate-events.jsonl")
+  const gateDec = existsSync(gateFile)
+    ? readFileSync(gateFile, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)).filter((l) => l.phase === "decision").at(-1)
+    : null
+  const factsOk = blocked && gateDec?.decision === "blocked" && !receiptExists
+  if (!factsOk) console.log(`  [warn] SHOT-06: 期待した遮断状態ではない blocked=${blocked} gate=${gateDec?.decision} receipt=${receiptExists}`)
+  // 3) 実証拠を端末で表示: ガード判定 + 公開記録ディレクトリ + explain（全て実ファイル/実測由来）
   const file = `SHOT-06__${run}__01.png`
   await shotDone(null, {
     shot: "SHOT-06", runId: run, kind: "terminal", file,
@@ -456,13 +488,23 @@ SCENES["SHOT-06"] = async (ctx) => {
       `runs/${run}/evidence/outer-verification.json`,
     ],
     slide: "9 / 10",
+    // 成立条件: 実測で blocked・receipt非存在が揃った時だけ場面成立扱い
+    verify: () => [
+      ...(blocked ? [] : ["demo_publishがblockedとして観測されない"]),
+      ...(gateDec?.decision === "blocked" ? [] : [`gate decision=${gateDec?.decision}`]),
+      ...(receiptExists ? ["receiptが存在する"] : []),
+    ],
     capture: (out) => termShot({
       name: "shot06", out, cwd: ROOT, font: 26, wait: 4,
-      cmd:
-        `echo '== ガード判定（実hook記録） ==' ; ` +
-        `tail -1 runs/${run}/evidence/gate-events.jsonl | ${NODE} -e 'const e=JSON.parse(require("fs").readFileSync(0,"utf8"));console.log("  decision:",e.decision);console.log("  reason:",e.reason);console.log("  tool本体: 未実行（receiptなし）")' ; ` +
-        `echo '' ; echo '== 公開記録ディレクトリ ==' ; ls runs/${run}/publish/ ; echo '  → receipt.json は存在しない' ; ` +
-        `echo '' ; sh ./democtl explain ${run}`,
+      cmd: factsOk
+        ? `echo '== ガード判定（実hook記録） ==' ; ` +
+          `tail -1 runs/${run}/evidence/gate-events.jsonl | ${NODE} -e 'const e=JSON.parse(require("fs").readFileSync(0,"utf8"));console.log("  decision:",e.decision);console.log("  reason:",e.reason)' ; ` +
+          `test -f runs/${run}/publish/receipt.json && echo '  receipt: 存在する(要レビュー)' || echo '  tool本体: 未実行 / receipt.json は存在しない（実測）' ; ` +
+          `echo '' ; echo '== 公開記録ディレクトリ ==' ; ls -la runs/${run}/publish/ ; ` +
+          `echo '' ; sh ./democtl explain ${run}`
+        : `echo '== 要レビュー: 期待した遮断状態ではありません ==' ; ` +
+          `tail -3 runs/${run}/evidence/gate-events.jsonl 2>/dev/null ; ls -la runs/${run}/publish/ ; ` +
+          `echo '' ; sh ./democtl explain ${run}`,
     }),
   })
 }
@@ -595,6 +637,8 @@ SCENES["SHOT-11"] = async (ctx) => {
     notClaimed: ["この公開が正しいこと"],
     evidence: [`runs/${run}/publish/receipt.json`],
     slide: "11",
+    // 実測条件: receiptが実際に作成された時だけ場面成立
+    verify: () => (existsSync(path.join(RUNS, run, "publish", "receipt.json")) ? [] : ["receipt missing"]),
   })
   const receipt = existsSync(path.join(RUNS, run, "publish", "receipt.json"))
   if (!receipt) console.log(`  [warn] SHOT-11: receipt missing (expected present)`)
@@ -645,7 +689,10 @@ async function main() {
     runs = await prepareRuns()
     console.log(`prepared runs: ${JSON.stringify(runs)}`)
   }
-  const browser = await chromium.launch({ headless: true })
+  // stub-local セッション前提の場面が多いため、所有プロセスとしてstubを保証（検収F07）
+  democtl("stub ensure")
+  // R2-04: env未指定だと親process.envが使われるため、明示的にallowlistを渡す
+  const browser = await launchBrowser()
   const ctx = { runs, browser }
   try {
     for (const id of targets) {

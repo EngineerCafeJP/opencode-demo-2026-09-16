@@ -1,0 +1,93 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  background: #0f1420;
+  color: #eef2f8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.notice {
+  width: 100%;
+  background: #4a3419;
+  color: #ffd88a;
+  text-align: center;
+  font-size: 22px;
+  padding: 14px 0;
+  letter-spacing: 0.05em;
+}
+
+.card {
+  margin-top: 48px;
+  background: #1a2233;
+  border: 1px solid #2c3a55;
+  border-radius: 16px;
+  padding: 40px 64px;
+  text-align: center;
+  width: 900px;
+}
+
+h1 {
+  font-size: 34px;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font-size: 20px;
+  color: #93a4c0;
+  margin: 0 0 40px;
+}
+
+.count-row {
+  font-size: 96px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.capacity {
+  font-size: 48px;
+  color: #93a4c0;
+}
+
+.status {
+  font-size: 26px;
+  margin: 24px 0 8px;
+}
+
+.status.full { color: #ffb36b; }
+.status.open { color: #8ee6a8; }
+
+#apply {
+  font-size: 30px;
+  padding: 20px 64px;
+  margin: 32px 0 24px;
+  border-radius: 12px;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+}
+
+#apply:hover { background: #2f6fd8; }
+
+.result {
+  font-size: 26px;
+  min-height: 40px;
+  margin: 0 0 24px;
+  font-weight: 600;
+}
+
+.result.ok { color: #8ee6a8; }
+.result.rejected { color: #ff9d9d; }
+.result.error { color: #ffd88a; }
+
+.meta {
+  font-size: 18px;
+  color: #5f6f8c;
+  margin: 0;
+}

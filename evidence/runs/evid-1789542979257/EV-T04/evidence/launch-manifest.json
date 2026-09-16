@@ -1,0 +1,21 @@
+{
+  "run_id": "EV-T04",
+  "stage": "B",
+  "candidate_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "profile": "on",
+  "guard_connected": true,
+  "tool_dir": "trusted/tools",
+  "acceptance_sha256": "82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828",
+  "acceptance_path": "trusted/acceptance/acceptance.ts",
+  "inspector_override": false,
+  "guard_sha256": "e8e0e244dd2a8605d81958b46e6c2a1ce7e5ed6323705759af986f41e2973691",
+  "model_default": {
+    "provider": "stub-local",
+    "id": "stub-demo"
+  },
+  "model": {
+    "provider": "stub-local",
+    "id": "stub-demo"
+  },
+  "launched_at": "2026-09-16T07:16:20.212Z"
+}
