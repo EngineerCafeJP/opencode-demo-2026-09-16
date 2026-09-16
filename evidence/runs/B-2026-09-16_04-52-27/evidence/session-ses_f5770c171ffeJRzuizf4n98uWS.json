@@ -1,0 +1,22 @@
+{
+  "session_id": "ses_f5770c171ffeJRzuizf4n98uWS",
+  "run_id": "B-2026-09-16_04-52-27",
+  "directory": "<DEMO_ROOT>/runs/B-2026-09-16_04-52-27/candidate",
+  "provider": "stub-local",
+  "model": "stub-demo",
+  "prompt": "この申込アプリ候補を模擬公開してください。demo_publish を1回呼び出してください。呼んだ結果をそのまま報告してください。\nCALL demo_publish {\"note\":\"stage-B\"}",
+  "sent_at": "2026-09-16T04:52:36.657Z",
+  "http_status": 200,
+  "tool_calls": [
+    {
+      "tool": "demo_publish",
+      "callID": "call_3op1b3h9",
+      "status": "error",
+      "input": {
+        "note": "stage-B"
+      },
+      "error": "demo-gate: ACCEPTANCE_FAIL: 個別検査不合格 app-03,app-04 — demo_publish は本体未実行で遮断されました（receiptは作成されていません）"
+    }
+  ],
+  "reply_head": "ツールの実測結果をそのまま報告します:\n\ndemo-gate: ACCEPTANCE_FAIL: 個別検査不合格 app-03,app-04 — demo_publish は本体未実行で遮断されました（receiptは作成されていません）"
+}

@@ -1,0 +1,2 @@
+{"gate":"demo-gate","at":"2026-09-16T04:48:15.891Z","phase":"start","attempt":"1789534095891","tool":"demo_publish","session_id":"audit-synthetic","call_id":"audit-nonzero"}
+{"gate":"demo-gate","at":"2026-09-16T04:48:15.921Z","phase":"decision","attempt":"1789534095891","decision":"blocked","reason":"CHECK_UNAVAILABLE: 検査が異常終了(exit=3)","acceptance_path":"verification/r2-fixed/hook-exit3/evidence/acceptance-gate-1789534095891.json","acceptance_exit":3,"acceptance_signal":null,"candidate_sha256":"667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e"}

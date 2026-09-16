@@ -1,0 +1,27 @@
+{
+  "run_id": "<DEMO_ROOT>/runs/evid-1789534188233/EV-T03",
+  "stage": "B",
+  "verified_at": "2026-09-16T04:49:49.207Z",
+  "facts": {
+    "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "hash_invariant": true,
+    "unit_tests": "PASS",
+    "app_acceptance": "FAIL",
+    "acceptance_evidence": "runs/evid-1789534188233/EV-T03/evidence/acceptance-verify-1789534188584.json",
+    "tool_called_demo_publish": true,
+    "tool_called_demo_check": false,
+    "gate_decision": "blocked",
+    "gate_reason": "x",
+    "receipt": "run_id mismatch OTHER-RUN-9999 != <DEMO_ROOT>/runs/evid-1789534188233/EV-T03",
+    "guard_connected": true,
+    "session_models_used": [],
+    "default_model_in_manifest": "stub-local/stub-demo"
+  },
+  "violations": [
+    "RECEIPT_INVALID: run_id mismatch OTHER-RUN-9999 != <DEMO_ROOT>/runs/evid-1789534188233/EV-T03"
+  ],
+  "runtime_probe": "FAIL",
+  "intended_fault_detected": false,
+  "scenario_match": "FAIL"
+}

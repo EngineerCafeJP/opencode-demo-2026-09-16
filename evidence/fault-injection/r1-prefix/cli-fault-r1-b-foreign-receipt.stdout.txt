@@ -1,0 +1,24 @@
+exit=0
+
+{
+  "run_id": "fault-r1-b-foreign-receipt",
+  "stage": "B",
+  "verified_at": "2026-09-16T04:35:23.612Z",
+  "facts": {
+    "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "hash_invariant": true,
+    "unit_tests": "PASS",
+    "app_acceptance": "FAIL",
+    "acceptance_evidence": "runs/fault-r1-b-foreign-receipt/evidence/acceptance-verify-1789533322994.json",
+    "tool_called_demo_publish": true,
+    "tool_called_demo_check": false,
+    "gate_decision": "blocked",
+    "gate_reason": "synthetic",
+    "receipt": "run_id mismatch OTHER-RUN-9999 != fault-r1-b-foreign-receipt",
+    "guard_connected": true
+  },
+  "runtime_probe": "FAIL",
+  "scenario_match": "PASS"
+}
+

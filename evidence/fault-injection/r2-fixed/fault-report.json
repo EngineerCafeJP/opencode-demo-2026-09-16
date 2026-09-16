@@ -1,0 +1,95 @@
+{
+  "mode": "fixed",
+  "at": "2026-09-16T04:48:18.286Z",
+  "note": "全入力は合成。実モデル・外部通信なし",
+  "results": [
+    {
+      "id": "gate/missing-required-cases",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "reason=CHECK_INCOMPLETE: 必須ケース欠落 app-02,app-03,app-04"
+    },
+    {
+      "id": "gate/aggregate-pass-with-failing-case",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "reason=ACCEPTANCE_FAIL: 個別検査不合格 app-03"
+    },
+    {
+      "id": "gate/case-element-null",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "reason=CHECK_SCHEMA: 検査identity不一致 tool=undefined case=undefined"
+    },
+    {
+      "id": "gate/duplicate-case",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "reason=CHECK_SCHEMA: case重複 app-01"
+    },
+    {
+      "id": "gate/exit-nonzero-after-pass-doc",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "reason=CHECK_UNAVAILABLE: 検査が異常終了(exit=3)"
+    },
+    {
+      "id": "gate/inspector-timeout",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "reason=CHECK_UNAVAILABLE: 検査がタイムアウト"
+    },
+    {
+      "id": "gate/valid-full-pass",
+      "want": "ALLOW",
+      "got": "ALLOW",
+      "pass": true,
+      "match": true,
+      "detail": "reason=acceptance PASS (exit=0・必須4ケース全合格・identity一致)"
+    },
+    {
+      "id": "hook/nonzero-exit-after-pass-document",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "threw=true decision=blocked exit_seen=3"
+    },
+    {
+      "id": "cli/b-foreign-receipt",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "exit=1 probe=FAIL scenario=FAIL"
+    },
+    {
+      "id": "cli/b-hash-mismatch",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "exit=1 invariant=false scenario=FAIL"
+    },
+    {
+      "id": "cli/a-no-tool-evidence",
+      "want": "BLOCK",
+      "got": "BLOCK",
+      "pass": true,
+      "match": true,
+      "detail": "exit=1 check_called=false scenario=FAIL"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "session_id": "ses_f57706a1affehpekB4cb62UEHK",
+  "run_id": "C-2026-09-16_04-52-51",
+  "directory": "<DEMO_ROOT>/runs/C-2026-09-16_04-52-51/candidate",
+  "provider": "stub-local",
+  "model": "stub-demo",
+  "prompt": "この申込アプリ候補を模擬公開してください。demo_publish を1回呼び出してください。呼んだ結果をそのまま報告してください。\nCALL demo_publish {\"note\":\"stage-C\"}",
+  "sent_at": "2026-09-16T04:52:58.897Z",
+  "http_status": 200,
+  "tool_calls": [
+    {
+      "tool": "demo_publish",
+      "callID": "call_fy302wlb",
+      "status": "completed",
+      "input": {
+        "note": "stage-C"
+      },
+      "output_head": "receipt 作成: <DEMO_ROOT>/runs/C-2026-09-16_04-52-51/publish/receipt.json\ncandidate_sha256=d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1"
+    }
+  ],
+  "reply_head": "ツールの実測結果をそのまま報告します:\n\nreceipt 作成: <DEMO_ROOT>/runs/C-2026-09-16_04-52-51/publish/receipt.json\ncandidate_sha256=d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1"
+}

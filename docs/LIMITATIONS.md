@@ -9,14 +9,17 @@
 - ガードは「demo_publishツール経由の公開」を止める教材機構です。他経路（直接ファイル書込み等）を防ぐ汎用セキュリティ機構ではありません
 - 定員10名・409拒否は教材アプリの契約であり、実在サービスの仕様ではありません
 - 「より安全」「世界初」等の優位性は主張しません
+- stub-local/stub-demo は**決定論的スタブ**です。「実モデルが修復した」証拠にはなりません — 実モデル修復は `evidence/runs/C-2026-09-16_02-02-27/`（gemma4:31b）に分離記録
 
 ## 検証したが限界があるもの
 
 | 項目 | 実測 | 限界 |
 |---|---|---|
-| A〜D挙動 | 2サイクル・計8runで verify=PASS | 単一端末(macOS arm64)上のローカル検証のみ。他OS・他端末未検証 |
-| ガード遮断 | tool.execute.before で実遮断・receipt無し | OpenCode本体の他の実行経路（TUI直接操作等）での網羅的遮断は未検証。serve API経路で確認 |
-| 実モデル修復 | gemma4:31b がcheck→edit→再checkで409へ収束 | 1回の成功であり再現性は非保証。小モデル(gemma4:e2b)はedit失敗した記録あり。決定的修復 `democtl fix` が反復用の正規経路 |
+| A〜D挙動 | R2 run群 4/4 scenario_match=PASS | 単一端末(macOS arm64)上のローカル検証のみ。他OS・他端末未検証 |
+| ガード遮断 | tool.execute.before で実遮断・receipt無し・合成異常系10件blocked | OpenCode本体の他の実行経路（TUI直接操作等）での網羅的遮断は未検証。serve API経路で確認 |
+| 外側検証 | 実CLI verify が証拠改竄/欠落/不一致で exit=1 | 検証器自身の欠陥は不完全性定理の範囲 — 合成異常系での挙動確認に留まる |
+| 環境分離 | 子プロセスは12変数allowlist・合成マーカー漏洩なし | doctorのbaseline比較は `trusted/baseline/existing-config.json` 依存。baseline欠落時はUNKNOWN（合格とは言わない） |
+| 実モデル修復 | gemma4:31b がcheck→edit→再checkで409へ収束 | 1回の成功であり再現性は非保証。小モデル(gemma4:e2b)は未収束の記録あり。決定的修復 `democtl fix` が反復用の正規経路 |
 | 撮影 | 12場面すべて実撮影・目視 | 撮影者（エージェント）自身の点検。人間の講師による最終レビューは **PENDING** |
 | Web UI表示 | 公式Web UIで実測値を表示（SHOT-05/06/09/11） | 汎用ツールの生出力欄は公式UIに存在しないため、モデル応答テキストへの実測エコーで表示。ツール実行自体は実呼出し |
 
@@ -38,6 +41,6 @@
 
 ## 既知の実装上の注意
 
-- runは上書きせず新規作成。`./democtl stop` はserve-info/app-infoのPIDから個別停止（他プロセスは殺さない）
+- runは上書きせず新規作成（時刻+接尾辞で一意・既存IDは拒否）。`./democtl stop` はserve-info/app-info/stub-infoのPID+argv身元照合で個別停止（他プロセスは殺さない）
 - workspaceは強制resetしない（修復途中のまま残る場合はRUNBOOK§5参照）
-- D（ガード未接続）を最終状態にしない。実演後はBを再実行して接続状態へ戻す
+- D（ガード未接続）を最終状態にしない。実演後は `./democtl recovery`（B拒否/C許可の再検証）で接続状態へ戻す

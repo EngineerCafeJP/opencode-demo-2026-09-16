@@ -1,0 +1,8 @@
+{
+  "tool": "demo_publish",
+  "run_id": "OTHER-RUN-9999",
+  "candidate_sha256": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+  "published_at": "2026-09-16T04:52:18.806Z",
+  "session_id": "x",
+  "call_id": "y"
+}

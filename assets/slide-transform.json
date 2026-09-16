@@ -1,0 +1,77 @@
+{
+  "generated_at": "2026-09-16T05:13:37.500Z",
+  "transform": [
+    {
+      "shot_id": "SHOT-01",
+      "src": "assets/raw/SHOT-01__A-2026-09-16_05-10-19__01.png",
+      "dst": "assets/slide-ready/SHOT-01_unit-tests-pass.png",
+      "crop_top_px": 86
+    },
+    {
+      "shot_id": "SHOT-02",
+      "src": "assets/raw/SHOT-02__A-2026-09-16_05-10-19__01.png",
+      "dst": "assets/slide-ready/SHOT-02_register-9-to-10.png",
+      "crop_top_px": 0
+    },
+    {
+      "shot_id": "SHOT-03",
+      "src": "assets/raw/SHOT-03__A-2026-09-16_05-10-19__01.png",
+      "dst": "assets/slide-ready/SHOT-03_full-before-click.png",
+      "crop_top_px": 0
+    },
+    {
+      "shot_id": "SHOT-04",
+      "src": "assets/raw/SHOT-04__A-2026-09-16_05-10-19__01.png",
+      "dst": "assets/slide-ready/SHOT-04_over-capacity.png",
+      "crop_top_px": 0
+    },
+    {
+      "shot_id": "SHOT-05",
+      "src": "assets/raw/SHOT-05__A-2026-09-16_05-10-19__01.png",
+      "dst": "assets/slide-ready/SHOT-05_opencode-check-measured.png",
+      "crop_top_px": 0
+    },
+    {
+      "shot_id": "SHOT-06",
+      "src": "assets/raw/SHOT-06__B-2026-09-16_05-10-19__01.png",
+      "dst": "assets/slide-ready/SHOT-06_guard-blocked.png",
+      "crop_top_px": 86
+    },
+    {
+      "shot_id": "SHOT-07",
+      "src": "assets/raw/SHOT-07__C-2026-09-16_05-10-20__01.png",
+      "dst": "assets/slide-ready/SHOT-07_app-only-diff.png",
+      "crop_top_px": 86
+    },
+    {
+      "shot_id": "SHOT-08",
+      "src": "assets/raw/SHOT-08__C-2026-09-16_05-10-20__01.png",
+      "dst": "assets/slide-ready/SHOT-08_full-rejected-10.png",
+      "crop_top_px": 0
+    },
+    {
+      "shot_id": "SHOT-09",
+      "src": "assets/raw/SHOT-09__C-2026-09-16_05-10-20__01.png",
+      "dst": "assets/slide-ready/SHOT-09_publish-allowed-receipt.png",
+      "crop_top_px": 86
+    },
+    {
+      "shot_id": "SHOT-10",
+      "src": "assets/raw/SHOT-10__D-2026-09-16_05-10-20__01.png",
+      "dst": "assets/slide-ready/SHOT-10_guard-tests-pass.png",
+      "crop_top_px": 86
+    },
+    {
+      "shot_id": "SHOT-11",
+      "src": "assets/raw/SHOT-11__D-2026-09-16_05-10-20__01.png",
+      "dst": "assets/slide-ready/SHOT-11_unguarded-publish.png",
+      "crop_top_px": 0
+    },
+    {
+      "shot_id": "SHOT-12",
+      "src": "assets/raw/SHOT-12__D-2026-09-16_05-10-20__01.png",
+      "dst": "assets/slide-ready/SHOT-12_outer-verify-fail.png",
+      "crop_top_px": 86
+    }
+  ]
+}

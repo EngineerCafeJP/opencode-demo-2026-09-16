@@ -81,9 +81,11 @@ export default {
       summary = `受入検査の結果ファイルを読めませんでした: ${outFile}`
     }
 
+    const demoRoot = path.resolve(runDir, "..", "..")
+    const relTarget = path.relative(demoRoot, target)
     return {
       title: `demo_check ${args.case} → ${verdict}`,
-      output: `[demo_check ${args.case}] verdict=${verdict}\n対象: ${target}\n${summary}\n証拠: ${path.basename(outFile)}`,
+      output: `[demo_check ${args.case}] verdict=${verdict}\n対象: ${relTarget}\n${summary}\n証拠: ${path.basename(outFile)}`,
       metadata: { verdict, evidence: outFile },
     }
   },

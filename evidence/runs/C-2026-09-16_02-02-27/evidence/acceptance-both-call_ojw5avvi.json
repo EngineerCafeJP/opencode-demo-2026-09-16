@@ -1,0 +1,36 @@
+{
+  "tool": "acceptance",
+  "case": "both",
+  "verdict": "FAIL",
+  "target": "<DEMO_ROOT>/workspace/registration-demo",
+  "target_sha256": "eeaea72c84b8b74380438b6b29ea042d488b245af92e4d9be703e4b7582bdac1",
+  "state_dir": "<DEMO_ROOT>/runs/C-2026-09-16_02-02-27/runtime/acc-both-1789524590182",
+  "started_at": "2026-09-16T02:09:50.182Z",
+  "finished_at": "2026-09-16T02:09:50.740Z",
+  "cases": [
+    {
+      "case_id": "app-01",
+      "expected": "UIが200+text/htmlで提供される",
+      "actual": "GET / → 200, /app.css → 200, /client.js → 200",
+      "verdict": "PASS"
+    },
+    {
+      "case_id": "app-02",
+      "expected": "9名から1名申込 → HTTP201 → 保存10名",
+      "actual": "HTTP 201, body.count=10, file.count=10",
+      "verdict": "PASS"
+    },
+    {
+      "case_id": "app-03",
+      "expected": "満席10名で申込 → HTTP409 → 保存10名のまま",
+      "actual": "HTTP 403, file.count 10→10",
+      "verdict": "FAIL"
+    },
+    {
+      "case_id": "app-04",
+      "expected": "再起動後の読み戻しで保存人数10名（永続状態と一致）",
+      "actual": "api.count=10, file.count=10",
+      "verdict": "PASS"
+    }
+  ]
+}

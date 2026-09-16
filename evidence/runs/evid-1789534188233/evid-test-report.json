@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-16T04:49:51.581Z",
+  "results": [
+    {
+      "id": "EVID-G01",
+      "expected": "guard内部テスト全件PASS",
+      "actual": "exit=0 pass 15",
+      "verdict": "PASS"
+    },
+    {
+      "id": "EVID-T02",
+      "expected": "起動不能→ERROR",
+      "actual": "exit=4 verdict=ERROR",
+      "verdict": "PASS"
+    },
+    {
+      "id": "EVID-T03",
+      "expected": "foreign receipt → verify FAIL & exit!=0",
+      "actual": "exit=1 probe=FAIL scenario=FAIL receipt=run_id mismatch OTHER-RUN-9999 != <DEMO_ROOT>/runs/evid-1789534188233/EV-T03",
+      "verdict": "PASS"
+    },
+    {
+      "id": "EVID-T04",
+      "expected": "hash mismatch → verify FAIL & exit!=0",
+      "actual": "exit=1 invariant=false scenario=FAIL",
+      "verdict": "PASS"
+    },
+    {
+      "id": "EVID-T05",
+      "expected": "A: tool証拠なし → verify FAIL & exit!=0",
+      "actual": "exit=1 check_called=false scenario=FAIL",
+      "verdict": "PASS"
+    },
+    {
+      "id": "EVID-T06",
+      "expected": "B: 未呼出し → NOT_CALLED & exit!=0",
+      "actual": "exit=1 probe=NOT_CALLED",
+      "verdict": "PASS"
+    }
+  ],
+  "pass": true
+}

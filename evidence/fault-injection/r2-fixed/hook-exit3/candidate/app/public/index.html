@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ハーネス入門・デモ申込（合成教材）</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div class="notice" role="note">講座用の合成データ／実サービスへの申込ではありません</div>
+
+<main class="card">
+  <h1 id="event-name">ハーネス入門・デモ申込</h1>
+  <p class="subtitle">定員10名の申込デモ（合成教材）</p>
+
+  <div class="count-row">
+    <span id="count" class="count">―</span>
+    <span class="capacity">/ <span id="capacity">10</span></span>
+  </div>
+  <p id="status" class="status">読み込み中…</p>
+
+  <button id="apply" type="button">1名申し込む</button>
+
+  <p id="result" class="result" aria-live="polite">結果: 未実施</p>
+
+  <p class="meta">state read-back: <code>/api/state</code> ・ subrun: <code id="subrun">―</code></p>
+</main>
+
+<script src="/client.js"></script>
+</body>
+</html>

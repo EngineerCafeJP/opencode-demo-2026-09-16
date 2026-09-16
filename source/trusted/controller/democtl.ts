@@ -65,9 +65,11 @@ async function freePort(): Promise<number> {
 }
 
 function runDirOf(id: string) {
-  const dir = path.join(RUNS, id)
-  if (!existsSync(dir)) throw new Error(`run not found: ${id} (${dir})`)
-  return dir
+  // run名 or 直接のディレクトリパス（evid-test等が runs/ 外の合成runを渡す場合）の両方を受ける
+  const dir = path.isAbsolute(id) ? id : path.join(RUNS, id)
+  const alt = existsSync(dir) ? dir : existsSync(id) ? path.resolve(id) : dir
+  if (!existsSync(alt)) throw new Error(`run not found: ${id} (${alt})`)
+  return alt
 }
 
 function latestRun(stage?: string): string {
@@ -76,9 +78,41 @@ function latestRun(stage?: string): string {
   return ids[ids.length - 1]
 }
 
-// ---------- 分離 env ----------
+// ---------- 分離 env（検収F03: 親envを丸ごと継承しない） ----------
+//
+// 子プロセスごとに「許可リスト」で環境を構成する。
+// ベースはOS/nodeの動作に必要な最小限のみ。既存OpenCode設定・認証値・
+// プロキシ・プロバイダ変数・DEMO_* はここでは渡さず、明示するものだけ載せる。
 
-function isolatedEnv(runDir: string, profile: string) {
+const ENV_BASE_ALLOWLIST = [
+  "PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TERM", "TERM_PROGRAM",
+  "SHELL", "USER", "LOGNAME", "TMPDIR", "SSH_AUTH_SOCK",
+  "__CF_USER_TEXT_ENCODING", "SYSTEM_VERSION_COMPAT", "XPC_FLAGS", "XPC_SERVICE_NAME",
+]
+
+// 絶対に子へ渡さない接頭辞（誤ってbase/extraへ混入した場合の最終防衛線）
+const ENV_DENY = /^(OPENCODE_CONFIG_CONTENT|.*_API_KEY|.*_TOKEN|.*_SECRET|.*_PASSWORD|HTTP_PROXY|HTTPS_PROXY|ALL_PROXY|NO_PROXY|ANTHROPIC_|OPENAI_|GEMINI_|GOOGLE_|AWS_|AZURE_|AIDD_)/i
+
+type ChildKind = "opencode" | "app" | "acceptance" | "controller" | "test" | "capture" | "stub"
+
+function childEnv(kind: ChildKind, extra: Record<string, string> = {}): Record<string, string> {
+  const env: Record<string, string> = {}
+  for (const k of ENV_BASE_ALLOWLIST) {
+    const v = process.env[k]
+    if (v !== undefined && !ENV_DENY.test(k)) env[k] = v
+  }
+  // kind別の追加許可
+  if (kind === "opencode" || kind === "controller") {
+    // OpenCode系はここで明示する分離変数のみ（DEMO_* は下の extra / isolatedEnv で明示）
+  }
+  if (kind === "stub") env.DEMO_STUB_PORT = String(STUB_PORT)
+  for (const [k, v] of Object.entries(extra)) {
+    if (!ENV_DENY.test(k)) env[k] = v
+  }
+  return env
+}
+
+function isolatedEnv(runDir: string, profile: string, extra: Record<string, string> = {}) {
   const priv = path.join(runDir, "private")
   for (const d of ["home", "tmp", "xdg-config", "xdg-data", "xdg-cache", "xdg-state"]) {
     mkdirSync(path.join(priv, d), { recursive: true })
@@ -86,8 +120,7 @@ function isolatedEnv(runDir: string, profile: string) {
   const profileDir = path.join(priv, "profile")
   if (existsSync(profileDir)) rmSync(profileDir, { recursive: true, force: true })
   cpSync(path.join(PROFILES, profile), profileDir, { recursive: true })
-  return {
-    ...process.env,
+  return childEnv("opencode", {
     HOME: path.join(priv, "home"),
     OPENCODE_TEST_HOME: path.join(priv, "home"),
     TMPDIR: path.join(priv, "tmp"),
@@ -108,7 +141,8 @@ function isolatedEnv(runDir: string, profile: string) {
     DEMO_ACCEPTANCE: ACCEPTANCE,
     DEMO_NODE: NODE,
     DEMO_FIXTURES: FIXTURES,
-  }
+    ...extra, // 呼出し側の明示的差し替え（inspector差替等）は最後に適用
+  })
 }
 
 function toolHashes(profile: string) {
@@ -142,7 +176,9 @@ function manifest(runId: string, stage: string, profile: string) {
     guard_sha256: guardHash(profile),
     tools_sha256: toolHashes(profile),
     guard_connected: guardHash(profile) !== null,
-    model: { provider: modelProvider(), id: modelId() },
+    // 設定上の既定値。実際に使われたモデルは evidence/session-*.json が記録し、
+    // verify が session_models_used として報告する（manifest≠実測の混同を防ぐ）
+    model_default: { provider: modelProvider(), id: modelId() },
   }
 }
 
@@ -159,8 +195,20 @@ const STAGE_VARIANT: Record<string, string> = { A: "broken", B: "broken", C: "br
 
 function cmdPrepare(stage: string) {
   if (!STAGE_VARIANT[stage]) throw new Error(`unknown stage ${stage}`)
-  const id = `${stage}-${new Date().toISOString().replace(/[:.]/g, "-").replace("T", "_").slice(0, 19)}`
+  // 同一秒の連続prepareでも一意（検収F07: 上書き・証拠混入を防ぐ）。
+  // 既存IDは絶対に再利用しない。衝突時は連番を付し、それでも衝突なら失敗させる。
+  const requested = arg("run")
+  if (requested && existsSync(path.join(RUNS, requested))) {
+    throw new Error(`run id already exists: ${requested}（既存runは上書きしない）`)
+  }
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-").replace("T", "_").slice(0, 19)
+  let id = requested ?? `${stage}-${stamp}`
+  for (let n = 2; !requested && existsSync(path.join(RUNS, id)); n++) {
+    if (n > 100) throw new Error(`run id collision persists: ${id}`)
+    id = `${stage}-${stamp}-${n}`
+  }
   const runDir = path.join(RUNS, id)
+  mkdirSync(runDir, { recursive: false })
   const candidate = path.join(runDir, "candidate")
   cpSync(path.join(VERSIONS, STAGE_VARIANT[stage]), candidate, { recursive: true })
 
@@ -203,7 +251,7 @@ function dirHeader(directory?: string) {
   return directory ? { "x-opencode-directory": directory } : {}
 }
 
-async function cmdServe(runId: string, profile: string) {
+async function cmdServe(runId: string, profile: string, opts: { inspector?: string } = {}) {
   const runDir = runDirOf(runId)
   const info = path.join(runDir, "serve-info.json")
   const existing = existsSync(info) ? j(info) : null
@@ -217,7 +265,9 @@ async function cmdServe(runId: string, profile: string) {
   }
   const port = await freePort()
   const logFile = path.join(runDir, `serve-${profile}.log`)
-  const env = isolatedEnv(runDir, profile)
+  // inspector差し替え（検査不能の実hook実演用。通常は指定しない）
+  const inspector = opts.inspector ?? arg("inspector")
+  const env = isolatedEnv(runDir, profile, inspector ? { DEMO_ACCEPTANCE: inspector } : {})
   const fd = openSync(logFile, "a")
   const child = spawn(BIN, ["serve", "--hostname", "127.0.0.1", "--port", String(port)], {
     env,
@@ -333,12 +383,16 @@ async function cmdApp(runId: string) {
   const port = await freePort()
   const logFile = path.join(runDir, "app-ui.log")
   const child = spawn(NODE, [path.join(runDir, "candidate", "app", "server.ts")], {
-    env: { ...process.env, DEMO_STATE_FILE: stateFile, DEMO_PORT: String(port), DEMO_SUBRUN_ID: `ui-${fixture}` },
+    env: childEnv("app", { DEMO_STATE_FILE: stateFile, DEMO_PORT: String(port), DEMO_SUBRUN_ID: `ui-${fixture}` }),
     stdio: ["ignore", openSync(logFile, "a"), openSync(logFile, "a")],
     detached: true,
   })
   await new Promise((r) => setTimeout(r, 1200))
-  wj(path.join(runDir, "app-info.json"), { pid: child.pid, port, url: `http://127.0.0.1:${port}`, fixture, state_file: stateFile, started_at: now() })
+  wj(path.join(runDir, "app-info.json"), {
+    pid: child.pid, port, url: `http://127.0.0.1:${port}`, fixture, state_file: stateFile, started_at: now(),
+    // stop時の身元照合用（ stale PID 信頼しない ）
+    identity: `${path.join(runDir, "candidate", "app", "server.ts")}`,
+  })
   child.unref()
   console.log(`app up run=${runId} url=http://127.0.0.1:${port} fixture=${fixture}`)
 }
@@ -349,7 +403,7 @@ function cmdCheck(runId: string) {
   const runDir = runDirOf(runId)
   const c = arg("case") ?? "both"
   const out = path.join(runDir, "evidence", `acceptance-${c}-direct-${Date.now()}.json`)
-  const r = sh(NODE, [ACCEPTANCE, "--target", path.join(runDir, "candidate"), "--case", c, "--run-dir", runDir, "--out", out, "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000 })
+  const r = sh(NODE, [ACCEPTANCE, "--target", path.join(runDir, "candidate"), "--case", c, "--run-dir", runDir, "--out", out, "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000, env: childEnv("acceptance") })
   console.log(r.stdout.trim().split("\n").slice(-12).join("\n"))
   console.log(`verdict-file=${path.relative(ROOT, out)} exit=${r.status}`)
   process.exitCode = r.status === 0 ? 0 : 1
@@ -359,7 +413,7 @@ function cmdUnit(runId: string) {
   const runDir = runDirOf(runId)
   const dir = path.join(runDir, "candidate", "tests", "unit")
   const files = readdirSync(dir).filter((f) => f.endsWith(".test.ts")).map((f) => path.join(dir, f))
-  const r = sh(NODE, ["--test", ...files], { timeout: 60000 })
+  const r = sh(NODE, ["--test", ...files], { timeout: 60000, env: childEnv("test") })
   process.stdout.write(r.stdout + r.stderr)
   wj(path.join(runDir, "evidence", `unit-${Date.now()}.json`), {
     run_id: runId, at: now(), exit: r.status, tail: (r.stdout + r.stderr).split("\n").slice(-15),
@@ -368,7 +422,7 @@ function cmdUnit(runId: string) {
 }
 
 function cmdGuardTest() {
-  const r = sh(NODE, ["--test", GUARD_TEST], { timeout: 60000 })
+  const r = sh(NODE, ["--test", GUARD_TEST], { timeout: 60000, env: childEnv("test") })
   process.stdout.write(r.stdout + r.stderr)
   process.exitCode = r.status === 0 ? 0 : 1
 }
@@ -423,6 +477,8 @@ async function cmdRunStage(stage: string) {
   const provider = arg("provider") ?? "stub-local"
   const model = arg("model") ?? "stub-demo"
   const directive = provider === "stub-local" ? (t: string) => `\nCALL ${t}` : () => ""
+  // コールドスタート対応（検収F07）: stub使用時は所有プロセスとして起動を保証
+  if (provider === "stub-local") await cmdStub("ensure")
 
   if (S === "C") {
     // 修復はオプション: --model-repair 指定時は実モデル修復を試行、無指定は presenter-applied
@@ -437,7 +493,8 @@ async function cmdRunStage(stage: string) {
     cmdSnapshot(runId)
   }
 
-  const profile = S === "D" ? "off" : "on"
+  // stage profile 統一（検収F07）: A=off（ガード無しの実測）・B/C=on・D=off（Bと同じ壊れた版）
+  const profile = S === "B" || S === "C" ? "on" : "off"
   await cmdServe(runId, profile)
 
   if (S === "A") {
@@ -462,6 +519,8 @@ async function cmdRunStage(stage: string) {
 
   await cmdVerify(runId)
   cmdStop(runId)
+  // D の後はガード接続状態を復帰させ、broken拒否/fixed許可を確認してから終わる
+  if (S === "D") await cmdRecovery()
 }
 
 async function promptAndWait(runId: string, directory: string, text: string, provider: string, model: string) {
@@ -532,9 +591,9 @@ async function cmdVerify(runId: string) {
 
   // 実測: 候補の現在hash・単体テスト・受入検査を外側から再実行
   const currentHash = dirHash(candidate)
-  const unit = sh(NODE, ["--test", ...readdirSync(path.join(candidate, "tests", "unit")).filter((f) => f.endsWith(".test.ts")).map((f) => path.join(candidate, "tests", "unit", f))], { timeout: 60000 })
+  const unit = sh(NODE, ["--test", ...readdirSync(path.join(candidate, "tests", "unit")).filter((f) => f.endsWith(".test.ts")).map((f) => path.join(candidate, "tests", "unit", f))], { timeout: 60000, env: childEnv("test") })
   const accOut = path.join(runDir, "evidence", `acceptance-verify-${Date.now()}.json`)
-  const acc = sh(NODE, [ACCEPTANCE, "--target", candidate, "--case", "both", "--run-dir", runDir, "--out", accOut, "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000 })
+  const acc = sh(NODE, [ACCEPTANCE, "--target", candidate, "--case", "both", "--run-dir", runDir, "--out", accOut, "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000, env: childEnv("acceptance") })
   const accReport = existsSync(accOut) ? j(accOut) : { verdict: "ERROR" }
 
   const gate = loadGateDecision(runDir)
@@ -555,21 +614,24 @@ async function cmdVerify(runId: string) {
   }
 
   const appAcc = accReport.verdict as string
-  let runtimeProbe: string
-  if (!publishCalled) runtimeProbe = "NOT_CALLED"
-  else if (receiptPresent && !receipt.valid) runtimeProbe = "FAIL" // 証拠完全性違反（他run/改変receipt）
-  else if (receipt.valid && appAcc !== "PASS") runtimeProbe = "FAIL"
-  else if (receipt.valid && appAcc === "PASS") runtimeProbe = "PASS"
-  else if (!receiptPresent && appAcc !== "PASS") runtimeProbe = "PASS"
-  else runtimeProbe = "NOT_OBSERVED"
-
-  const scenario: Record<string, () => boolean> = {
-    A: () => unit.status === 0 && appAcc === "FAIL" && (checkCalled || existsSync(accOut)),
-    B: () => publishCalled && gate.decision === "blocked" && !receipt.valid,
-    C: () => publishCalled && gate.decision === "allowed" && receipt.valid && appAcc === "PASS",
-    D: () => publishCalled && gate.decision === "none" && receipt.valid && appAcc === "FAIL" && runtimeProbe === "FAIL",
-  }
-  const scenarioMatch = scenario[stage] ? scenario[stage]() : false
+  const sessionModels = [...new Set(
+    readdirSync(path.join(runDir, "evidence")).filter((f) => f.startsWith("session-"))
+      .map((f) => { const s = j(path.join(runDir, "evidence", f)); return `${s.provider}/${s.model}` }),
+  )]
+  // 判定は verify-core.mjs の共有実装のみ（実CLIと試験が同一経路）
+  const { evaluateRunVerification } = await import(path.join(TRUSTED, "controller", "verify-core.mjs"))
+  const verdict = evaluateRunVerification({
+    stage,
+    hashInvariant: man.candidate_sha256 === currentHash,
+    unitOk: unit.status === 0,
+    appAcc,
+    gateDecision: gate.decision,
+    publishCalled,
+    checkCalled,
+    receiptPresent,
+    receiptValid: receipt.valid,
+    receiptReason: receipt.reason ?? null,
+  })
 
   const report = {
     run_id: runId, stage, verified_at: now(),
@@ -586,16 +648,55 @@ async function cmdVerify(runId: string) {
       gate_reason: gate.reason ?? null,
       receipt: receipt.valid ? "valid" : receipt.reason,
       guard_connected: man.guard_connected,
+      session_models_used: sessionModels,
+      default_model_in_manifest: `${man.model_default?.provider ?? man.model?.provider}/${man.model_default?.id ?? man.model?.id}`,
     },
-    runtime_probe: runtimeProbe,
-    scenario_match: scenarioMatch ? "PASS" : "FAIL",
+    violations: verdict.violations,
+    runtime_probe: verdict.runtime_probe,
+    intended_fault_detected: verdict.intended_fault_detected,
+    scenario_match: verdict.scenario_match,
   }
   wj(path.join(runDir, "evidence", "outer-verification.json"), report)
   console.log(JSON.stringify(report, null, 2))
-  process.exitCode = scenarioMatch ? 0 : 1
+  process.exitCode = verdict.scenario_match === "PASS" ? 0 : 1
 }
 
-// ---------- evid-test (故障注入: 実コード経路で検証器/ガードを叩く) ----------
+// ---------- evid-test (故障注入: 実CLI `democtl verify` 自体を叩く) ----------
+// 検収F02対応: 別判定実装ではなく、利用者が実際に実行する verify コマンドを
+// 子プロセスで起動し、JSON出力と終了コードの両方で合否を確かめる。
+// 「unit testは通るが実経路で誤合格」が教材のテーマなので、ここでは常に実経路を使う。
+
+const CTL_TS = path.join(TRUSTED, "controller", "democtl.ts")
+
+// 実CLI verify を run dir に対して実行し、{exit, report} を返す
+function cliVerify(runDir: string): { exit: number | null; report: Record<string, unknown> } {
+  const r = sh(NODE, [CTL_TS, "verify", "--run", runDir], { timeout: 180000, env: childEnv("controller") })
+  let report: Record<string, unknown> = {}
+  const out = (r.stdout ?? "").trim()
+  try {
+    report = JSON.parse(out.slice(out.indexOf("{")))
+  } catch {
+    report = { parse_error: true, stdout_tail: out.slice(-400) }
+  }
+  return { exit: r.status, report }
+}
+
+// evid-test 用の最小run dirを作る（prepare/run-stage ではなく証拠を直接配置）
+function mkRun(base: string, name: string, stage: string, version: "broken" | "fixed", guard: boolean): string {
+  const dir = path.join(base, name)
+  cpSync(path.join(VERSIONS, version), path.join(dir, "candidate"), { recursive: true })
+  mkdirSync(path.join(dir, "evidence"), { recursive: true })
+  mkdirSync(path.join(dir, "publish"), { recursive: true })
+  const man = {
+    run_id: name, stage, candidate_sha256: dirHash(path.join(dir, "candidate")),
+    guard_connected: guard, tool_dir: path.relative(ROOT, path.join(TRUSTED, "tools")),
+    model_default: { provider: "stub-local", id: "stub-demo" }, model: { provider: "stub-local", id: "stub-demo" },
+    launched_at: now(),
+  }
+  wj(path.join(dir, "evidence", "launch-manifest.json"), man)
+  wj(path.join(dir, "evidence", "prepare.json"), { run_id: name, stage, at: now() })
+  return dir
+}
 
 async function cmdEvidTest() {
   const outDir = path.join(RUNS, `evid-${Date.now()}`)
@@ -606,55 +707,54 @@ async function cmdEvidTest() {
     console.log(`${ok ? "✔" : "✖"} ${id}: ${actual}`)
   }
 
-  // T01: 検査ケース0件 → ガード評価が遮断（guard.test.ts 実実行の一部として確認済みだが、ここでも直接叩く）
-  const { evaluateGateDecision } = await import(GUARD_SRC)
-  const t01 = evaluateGateDecision({ verdict: "PASS", cases: [], target_sha256: "x" }, "x")
-  record("EVID-T01", "0件→遮断", !t01.allow && /0件/.test(t01.reason), `allow=${t01.allow} reason=${t01.reason}`)
+  // EVID-G01: ガード内部テスト（実ファイルの node --test。guard.test.ts 自体が実装を叩く）
+  const g = sh(NODE, ["--test", path.join(TRUSTED, "guard-source", "guard.test.ts")], { timeout: 60000, env: childEnv("test") })
+  const gPass = /pass (\d+)/.exec(g.stdout ?? "")
+  record("EVID-G01", "guard内部テスト全件PASS", g.status === 0 && Number(gPass?.[1] ?? 0) >= 15, `exit=${g.status} ${gPass?.[0] ?? "no count"}`)
 
-  // T02: 受入検査不能（server.ts欠落）→ 受入器がERROR
+  // EVID-T02: 受入検査不能（server.ts欠落）→ 受入器がERROR/exit4
   const t02dir = path.join(outDir, "t02")
   cpSync(path.join(VERSIONS, "broken"), path.join(t02dir, "candidate"), { recursive: true })
   rmSync(path.join(t02dir, "candidate", "app", "server.ts"))
   mkdirSync(path.join(t02dir, "evidence"), { recursive: true })
-  const t02 = sh(NODE, [ACCEPTANCE, "--target", path.join(t02dir, "candidate"), "--case", "both", "--run-dir", t02dir, "--out", path.join(t02dir, "acc.json"), "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000 })
+  const t02 = sh(NODE, [ACCEPTANCE, "--target", path.join(t02dir, "candidate"), "--case", "both", "--run-dir", t02dir, "--out", path.join(t02dir, "acc.json"), "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000, env: childEnv("acceptance") })
   const t02rep = existsSync(path.join(t02dir, "acc.json")) ? j(path.join(t02dir, "acc.json")) : { verdict: "NOFILE" }
   record("EVID-T02", "起動不能→ERROR", t02rep.verdict === "ERROR" && t02.status === 4, `exit=${t02.status} verdict=${t02rep.verdict}`)
 
-  // T03: 他runの古いreceipt → verify が invalid 判定
-  const t03dir = path.join(outDir, "t03")
-  cpSync(path.join(VERSIONS, "broken"), path.join(t03dir, "candidate"), { recursive: true })
-  mkdirSync(path.join(t03dir, "evidence"), { recursive: true })
-  mkdirSync(path.join(t03dir, "publish"), { recursive: true })
-  const t03manifest = { run_id: path.basename(t03dir), stage: "C", candidate_sha256: dirHash(path.join(t03dir, "candidate")), guard_connected: true }
-  wj(path.join(t03dir, "evidence", "launch-manifest.json"), t03manifest)
-  wj(path.join(t03dir, "evidence", "prepare.json"), { run_id: path.basename(t03dir), stage: "C" })
-  wj(path.join(t03dir, "publish", "receipt.json"), {
-    tool: "demo_publish", run_id: "OTHER-RUN-9999", candidate_sha256: t03manifest.candidate_sha256,
+  // EVID-T03: Bシナリオに他runのreceipt混入 → 実CLI verify がFAIL/exit!=0
+  const t03 = mkRun(outDir, "EV-T03", "B", "broken", true)
+  wj(path.join(t03, "publish", "receipt.json"), {
+    tool: "demo_publish", run_id: "OTHER-RUN-9999", candidate_sha256: j(path.join(t03, "evidence", "launch-manifest.json")).candidate_sha256,
     published_at: now(), session_id: "s", call_id: "c",
   })
-  wj(path.join(t03dir, "evidence", "tool-trace.json"), {})
-  writeFileSync(path.join(t03dir, "evidence", "tool-trace.jsonl"), JSON.stringify({ tool: "demo_publish", at: now() }) + "\n")
-  const t03verify = await verifyForRun(t03dir)
-  record("EVID-T03", "run_id不一致receipt→runtime_probe FAIL", t03verify.runtime_probe === "FAIL" && t03verify.facts.receipt !== "valid", `probe=${t03verify.runtime_probe} receipt=${t03verify.facts.receipt}`)
+  writeFileSync(path.join(t03, "evidence", "tool-trace.jsonl"), JSON.stringify({ tool: "demo_publish", at: now() }) + "\n")
+  writeFileSync(path.join(t03, "evidence", "gate-events.jsonl"), JSON.stringify({ phase: "decision", tool: "demo_publish", decision: "blocked", reason: "x", at: now() }) + "\n")
+  const v3 = cliVerify(t03)
+  record("EVID-T03", "foreign receipt → verify FAIL & exit!=0", v3.exit !== 0 && v3.report.scenario_match === "FAIL" && v3.report.runtime_probe === "FAIL",
+    `exit=${v3.exit} probe=${v3.report.runtime_probe} scenario=${v3.report.scenario_match} receipt=${(v3.report.facts as Record<string, unknown> | undefined)?.receipt}`)
 
-  // T04: manifest後に候補改変 → hash不変式FAIL
-  const t04dir = path.join(outDir, "t04")
-  cpSync(path.join(VERSIONS, "broken"), path.join(t04dir, "candidate"), { recursive: true })
-  mkdirSync(path.join(t04dir, "evidence"), { recursive: true })
-  wj(path.join(t04dir, "evidence", "launch-manifest.json"), { run_id: path.basename(t04dir), stage: "B", candidate_sha256: "0".repeat(64), guard_connected: true })
-  wj(path.join(t04dir, "evidence", "prepare.json"), { run_id: path.basename(t04dir), stage: "B" })
-  writeFileSync(path.join(t04dir, "evidence", "tool-trace.jsonl"), JSON.stringify({ tool: "demo_publish", at: now() }) + "\n")
-  const t04verify = await verifyForRun(t04dir)
-  record("EVID-T04", "hash不一致→invariant FAIL", t04verify.facts.hash_invariant === false, `invariant=${t04verify.facts.hash_invariant}`)
+  // EVID-T04: Bシナリオでmanifest hash不一致 → 実CLI verify がFAIL/exit!=0
+  const t04 = mkRun(outDir, "EV-T04", "B", "broken", true)
+  const m4 = j(path.join(t04, "evidence", "launch-manifest.json")); m4.candidate_sha256 = "0".repeat(64)
+  wj(path.join(t04, "evidence", "launch-manifest.json"), m4)
+  writeFileSync(path.join(t04, "evidence", "tool-trace.jsonl"), JSON.stringify({ tool: "demo_publish", at: now() }) + "\n")
+  writeFileSync(path.join(t04, "evidence", "gate-events.jsonl"), JSON.stringify({ phase: "decision", tool: "demo_publish", decision: "blocked", reason: "x", at: now() }) + "\n")
+  const v4 = cliVerify(t04)
+  record("EVID-T04", "hash mismatch → verify FAIL & exit!=0", v4.exit !== 0 && v4.report.scenario_match === "FAIL" && (v4.report.facts as Record<string, unknown> | undefined)?.hash_invariant === false,
+    `exit=${v4.exit} invariant=${(v4.report.facts as Record<string, unknown> | undefined)?.hash_invariant} scenario=${v4.report.scenario_match}`)
 
-  // T05: ツール未呼出し → NOT_CALLED
-  const t05dir = path.join(outDir, "t05")
-  cpSync(path.join(VERSIONS, "broken"), path.join(t05dir, "candidate"), { recursive: true })
-  mkdirSync(path.join(t05dir, "evidence"), { recursive: true })
-  wj(path.join(t05dir, "evidence", "launch-manifest.json"), { run_id: path.basename(t05dir), stage: "B", candidate_sha256: dirHash(path.join(t05dir, "candidate")), guard_connected: true })
-  wj(path.join(t05dir, "evidence", "prepare.json"), { run_id: path.basename(t05dir), stage: "B" })
-  const t05verify = await verifyForRun(t05dir)
-  record("EVID-T05", "未呼出し→NOT_CALLED", t05verify.runtime_probe === "NOT_CALLED", `probe=${t05verify.runtime_probe}`)
+  // EVID-T05: Aシナリオでdemo_check呼出し証拠ゼロ → 実CLI verify がFAIL/exit!=0
+  const t05 = mkRun(outDir, "EV-T05", "A", "broken", false)
+  const v5 = cliVerify(t05)
+  record("EVID-T05", "A: tool証拠なし → verify FAIL & exit!=0", v5.exit !== 0 && v5.report.scenario_match === "FAIL" && (v5.report.facts as Record<string, unknown> | undefined)?.tool_called_demo_check === false,
+    `exit=${v5.exit} check_called=${(v5.report.facts as Record<string, unknown> | undefined)?.tool_called_demo_check} scenario=${v5.report.scenario_match}`)
+
+  // EVID-T06: Bシナリオで publish 未呼出し（gate/trace/session証拠なし）→ NOT_CALLED（実CLI exit!=0）
+  // 注: gate decision=blocked が残る時点で hook発火=呼出し済みの証拠なので、ここでは証拠を全除去する
+  const t06 = mkRun(outDir, "EV-T06", "B", "broken", true)
+  const v6 = cliVerify(t06)
+  record("EVID-T06", "B: 未呼出し → NOT_CALLED & exit!=0", v6.exit !== 0 && v6.report.runtime_probe === "NOT_CALLED",
+    `exit=${v6.exit} probe=${v6.report.runtime_probe}`)
 
   const report = { at: now(), results, pass: results.every((r) => r.verdict === "PASS") }
   wj(path.join(outDir, "evid-test-report.json"), report)
@@ -662,66 +762,50 @@ async function cmdEvidTest() {
   process.exitCode = report.pass ? 0 : 1
 }
 
-async function verifyForRun(runDir: string): Promise<{ runtime_probe: string; facts: Record<string, unknown> }> {
-  const candidate = path.join(runDir, "candidate")
-  const man = j(path.join(runDir, "evidence", "launch-manifest.json"))
-  const currentHash = dirHash(candidate)
-  const accOut = path.join(runDir, "evidence", `acceptance-verify-${Date.now()}.json`)
-  sh(NODE, [ACCEPTANCE, "--target", candidate, "--case", "both", "--run-dir", runDir, "--out", accOut, "--node", NODE, "--fixtures", FIXTURES], { timeout: 120000 })
-  const accReport = existsSync(accOut) ? j(accOut) : { verdict: "ERROR" }
-  const gate = loadGateDecision(runDir)
-  const trace = loadTrace(runDir)
-  const publishCalled = trace.session.length > 0 || trace.self.some((t) => t.tool === "demo_publish")
-  const receiptPath = path.join(runDir, "publish", "receipt.json")
-  const receiptPresent = existsSync(receiptPath)
-  let receiptValid = false
-  let receiptReason = "absent"
-  if (receiptPresent) {
-    const r = j(receiptPath)
-    const problems: string[] = []
-    if (r.run_id !== path.basename(runDir)) problems.push(`run_id mismatch`)
-    if (r.candidate_sha256 !== man.candidate_sha256) problems.push("receipt!=manifest")
-    if (r.candidate_sha256 !== currentHash) problems.push("receipt!=current")
-    receiptValid = problems.length === 0
-    receiptReason = receiptValid ? "valid" : problems.join(";")
+// ---------- doctor ----------
+
+const EXPECTED_BIN_SHA256 = "16c960ba77421da11b53e785f359b73f328a86118b48feb4af143db5d9afb198"
+const BASELINE_FILE = path.join(TRUSTED, "baseline", "existing-config.json")
+
+// 既存環境の baseline（~/.config/opencode と既存binの一覧+hash）を記録する
+function snapshotExistingConfig() {
+  const cfgDir = path.join(process.env.HOME ?? "", ".config", "opencode")
+  const bin = path.join(process.env.HOME ?? "", ".local", "bin", "opencode")
+  const files: Record<string, { sha256: string; mtime: string }> = {}
+  const walk = (d: string) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, e.name)
+      if (e.isDirectory()) walk(p)
+      else if (e.isFile() && statSync(p).size < 5_000_000) files[path.relative(cfgDir, p)] = { sha256: fileHash(p), mtime: statSync(p).mtime.toISOString() }
+    }
   }
-  const appAcc = accReport.verdict
-  let runtimeProbe = "NOT_CALLED"
-  if (publishCalled) {
-    if (receiptPresent && !receiptValid) runtimeProbe = "FAIL"
-    else if (receiptValid && appAcc !== "PASS") runtimeProbe = "FAIL"
-    else if (receiptValid && appAcc === "PASS") runtimeProbe = "PASS"
-    else if (!receiptPresent && appAcc !== "PASS") runtimeProbe = "PASS"
-    else runtimeProbe = "NOT_OBSERVED"
-  }
+  if (existsSync(cfgDir)) walk(cfgDir)
   return {
-    runtime_probe: runtimeProbe,
-    facts: {
-      hash_invariant: man.candidate_sha256 === currentHash,
-      app_acceptance: appAcc,
-      receipt: receiptValid ? "valid" : receiptReason,
-      gate_decision: gate.decision,
-    },
+    captured_at: now(),
+    config_dir: cfgDir,
+    config_dir_mtime: existsSync(cfgDir) ? statSync(cfgDir).mtime.toISOString() : null,
+    config_files: files,
+    existing_bin_sha256: existsSync(bin) ? fileHash(bin) : null,
   }
 }
 
-// ---------- doctor ----------
-
 async function cmdDoctor() {
-  const checks: { name: string; ok: boolean; detail: string }[] = []
-  const add = (name: string, ok: boolean, detail: string) => {
-    checks.push({ name, ok, detail })
-    console.log(`${ok ? "✔" : "✖"} ${name}: ${detail}`)
+  const checks: { name: string; ok: boolean; detail: string; unknown?: boolean }[] = []
+  const add = (name: string, ok: boolean, detail: string, unknown = false) => {
+    checks.push({ name, ok, detail, unknown })
+    console.log(`${unknown ? "?" : ok ? "✔" : "✖"} ${name}: ${unknown ? "UNKNOWN — " : ""}${detail}`)
   }
 
-  const ver = sh(BIN, ["--version"], { timeout: 15000 })
+  const ver = sh(BIN, ["--version"], { timeout: 15000, env: childEnv("test") })
   add("bin/opencode --version", ver.status === 0 && ver.stdout.includes("1.18.31"), ver.stdout.trim() || String(ver.error))
-  add("binary sha256", true, fileHash(BIN))
-  add("node", sh(NODE, ["--version"]).status === 0, sh(NODE, ["--version"]).stdout.trim())
+  // 検収F06: hashを表示するだけでなく期待値と比較する
+  const binHash = fileHash(BIN)
+  add("binary sha256 == expected", binHash === EXPECTED_BIN_SHA256, `${binHash.slice(0, 16)}… ${binHash === EXPECTED_BIN_SHA256 ? "match" : `MISMATCH (expected ${EXPECTED_BIN_SHA256.slice(0, 16)}…)`}`)
+  add("node", sh(NODE, ["--version"]).status === 0, sh(NODE, ["--version"], { env: childEnv("test") }).stdout.trim())
 
   const ports = [4530, STUB_PORT]
   for (const p of ports) {
-    const s = sh("lsof", ["-iTCP:" + p, "-sTCP:LISTEN", "-t"])
+    const s = sh("lsof", ["-iTCP:" + p, "-sTCP:LISTEN", "-t"], { env: childEnv("test") })
     add(`port ${p} free`, s.status !== 0 || !s.stdout.trim(), s.stdout.trim() || "free")
   }
 
@@ -734,9 +818,34 @@ async function cmdDoctor() {
   }
   add("ollama 127.0.0.1:11434", ollama.startsWith("ok"), ollama)
 
-  const globalCfg = path.join(process.env.HOME ?? "", ".config", "opencode")
-  const mtime = existsSync(globalCfg) ? statSync(globalCfg).mtime.toISOString() : "absent"
-  add("existing ~/.config/opencode untouched (reference mtime)", true, mtime)
+  // 検収F06: mtime表示ではなく baseline manifest との実比較。baseline不在は UNKNOWN として明示。
+  if (!existsSync(BASELINE_FILE)) {
+    add("existing ~/.config/opencode unchanged vs baseline", false,
+      `baseline未記録 — './democtl baseline' で現在状態を基準化してください`, true)
+  } else {
+    const base = j(BASELINE_FILE)
+    const cur = snapshotExistingConfig()
+    const diffs: string[] = []
+    const all = new Set([...Object.keys(base.config_files ?? {}), ...Object.keys(cur.config_files)])
+    for (const f of all) {
+      const b = (base.config_files ?? {})[f]; const c = cur.config_files[f]
+      if (!b) diffs.push(`+${f}`); else if (!c) diffs.push(`-${f}`)
+      else if (b.sha256 !== c.sha256) diffs.push(`*${f}`)
+    }
+    if (base.existing_bin_sha256 && cur.existing_bin_sha256 !== base.existing_bin_sha256) diffs.push("*existing-bin")
+    add("existing ~/.config/opencode unchanged vs baseline", diffs.length === 0,
+      diffs.length === 0 ? `${Object.keys(cur.config_files).length} files identical (baseline ${base.captured_at})` : `DIFFS: ${diffs.join(", ")}`)
+  }
+
+  // 分離の実効確認: 合成マーカーを親envへ注入しても子envへ漏れないこと（検収F03の自己検査）
+  const SENTINELS = ["DEMO_SENTINEL_CFG", "OPENCODE_CONFIG_CONTENT", "DEMO_SENTINEL_KEY", "AIDD_MARKER_TEST"]
+  const saved: Record<string, string | undefined> = {}
+  for (const k of SENTINELS) { saved[k] = process.env[k]; process.env[k] = "SENTINEL-LEAK-CHECK" }
+  const probe = childEnv("opencode", { DEMO_RUN_DIR: "/x" })
+  for (const k of SENTINELS) { if (saved[k] === undefined) delete process.env[k]; else process.env[k] = saved[k] }
+  const leaked = SENTINELS.filter((k) => probe[k] === "SENTINEL-LEAK-CHECK")
+  add("child env allowlist (no parent markers)", leaked.length === 0,
+    leaked.length === 0 ? `${Object.keys(probe).length} vars allowlisted, 4 sentinels blocked` : `LEAKED: ${leaked.join(",")}`)
 
   const pwCache = path.join(process.env.HOME ?? "", "Library", "Caches", "ms-playwright")
   add("playwright browser cache (read-only reference)", existsSync(pwCache), existsSync(pwCache) ? readdirSync(pwCache).filter((d) => d.startsWith("chromium")).join(", ") : "absent")
@@ -745,28 +854,223 @@ async function cmdDoctor() {
     add(`path ${p}`, existsSync(path.join(ROOT, p)), existsSync(path.join(ROOT, p)) ? "present" : "MISSING")
   }
   const bad = checks.filter((c) => !c.ok)
-  console.log(bad.length ? `doctor: ${bad.length} problem(s)` : "doctor: all checks ok")
+  const unknowns = checks.filter((c) => c.unknown)
+  console.log(bad.length ? `doctor: ${bad.length} problem(s)${unknowns.length ? ` (${unknowns.length} UNKNOWN)` : ""}` : "doctor: all checks ok")
   process.exitCode = bad.length ? 1 : 0
+}
+
+// ---------- stub管理（検収F07: 起動とhealthを分離・所有権を記録・安全に停止） ----------
+
+const STUB_INFO = path.join(RUNS, ".stub-info.json")
+
+async function stubHealthy(): Promise<boolean> {
+  try {
+    const r = await fetch(`http://127.0.0.1:${STUB_PORT}/v1/models`, { signal: AbortSignal.timeout(3000) })
+    return r.ok
+  } catch {
+    return false
+  }
+}
+
+// PIDが「このデモが起動した想定のプロセス」かを ps で照合する（stale PIDを信用しない）
+function procIdentity(pid: number): string {
+  const r = sh("ps", ["-p", String(pid), "-o", "command="], { timeout: 10000, env: childEnv("test") })
+  return (r.stdout ?? "").trim()
+}
+
+function killIfOwned(pid: number, expectRe: RegExp, label: string): boolean {
+  const cmdline = procIdentity(pid)
+  if (!cmdline) return false // 既に終了
+  if (!expectRe.test(cmdline)) {
+    console.log(`skip pid=${pid} (${label}): identity mismatch — "${cmdline.slice(0, 120)}"`)
+    return false
+  }
+  try {
+    process.kill(pid, "SIGTERM")
+    console.log(`stopped pid=${pid} (${label})`)
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function cmdStub(action: string) {
+  if (action === "status") {
+    console.log(`stub ${await stubHealthy() ? "healthy" : "down"} http://127.0.0.1:${STUB_PORT}`)
+    return
+  }
+  if (action === "stop") {
+    if (existsSync(STUB_INFO)) {
+      const info = j(STUB_INFO)
+      if (info.pid) killIfOwned(info.pid, /stub-llm\/server\.ts/, "stub")
+      rmSync(STUB_INFO, { force: true })
+    }
+    if (await stubHealthy()) console.log("warning: stub still responding (not owned by this demo — left running)")
+    return
+  }
+  // start / ensure
+  if (await stubHealthy()) {
+    console.log(`stub already healthy http://127.0.0.1:${STUB_PORT}`)
+    return
+  }
+  const logFile = path.join(RUNS, ".stub.log")
+  mkdirSync(RUNS, { recursive: true })
+  const fd = openSync(logFile, "a")
+  const child = spawn(NODE, [STUB_LLM], {
+    env: childEnv("stub"),
+    detached: true,
+    stdio: ["ignore", fd, fd],
+  })
+  // 起動とhealthは別段階
+  const deadline = Date.now() + 10000
+  while (Date.now() < deadline) {
+    if (await stubHealthy()) {
+      wj(STUB_INFO, { pid: child.pid, port: STUB_PORT, script: STUB_LLM, started_at: now(), owned_by: "democtl" })
+      child.unref()
+      console.log(`stub up pid=${child.pid} http://127.0.0.1:${STUB_PORT}`)
+      return
+    }
+    if (child.exitCode !== null) throw new Error(`stub exited early: ${child.exitCode}`)
+    await new Promise((r) => setTimeout(r, 300))
+  }
+  throw new Error("stub did not become healthy within 10s")
+}
+
+// ---------- D後の復旧（検収F07: guard接続を戻し broken拒否/fixed許可 を確認） ----------
+
+async function cmdRecovery() {
+  const out: Record<string, unknown> = { at: now(), steps: [] as unknown[] }
+  const steps = out.steps as { name: string; ok: boolean; detail: string }[]
+  const rec = (name: string, ok: boolean, detail: string) => {
+    steps.push({ name, ok, detail })
+    console.log(`${ok ? "✔" : "✖"} recovery/${name}: ${detail}`)
+  }
+
+  // 1) broken + guard on → demo_publish が遮断される（実OpenCode経路）
+  cmdPrepare("B")
+  const bId = latestRun("B")
+  await cmdServe(bId, "on")
+  await promptAndWait(bId, path.join(RUNS, bId, "candidate"),
+    "この申込アプリ候補を模擬公開してください。demo_publish を1回呼び出してください。" + '\nCALL demo_publish {"note":"recovery-b"}',
+    "stub-local", "stub-demo")
+  const bGate = loadGateDecision(path.join(RUNS, bId))
+  const bReceipt = existsSync(path.join(RUNS, bId, "publish", "receipt.json"))
+  rec("broken-rejected", bGate.decision === "blocked" && !bReceipt, `gate=${bGate.decision} receipt=${bReceipt}`)
+  cmdStop(bId)
+
+  // 2) fixed + guard on → demo_publish が許可される
+  //    （snapshot は workspace→candidate を取るため、先に workspace を fixed にしてから固定する）
+  cmdPrepare("C")
+  const cId = latestRun("C")
+  cpSync(path.join(VERSIONS, "fixed"), WORKSPACE, { recursive: true })
+  cmdSnapshot(cId)
+  const cman = j(path.join(RUNS, cId, "evidence", "launch-manifest.json"))
+  cman.stage = "C"; wj(path.join(RUNS, cId, "evidence", "launch-manifest.json"), cman)
+  await cmdServe(cId, "on")
+  await promptAndWait(cId, path.join(RUNS, cId, "candidate"),
+    "この申込アプリ候補を模擬公開してください。demo_publish を1回呼び出してください。" + '\nCALL demo_publish {"note":"recovery-c"}',
+    "stub-local", "stub-demo")
+  const cGate = loadGateDecision(path.join(RUNS, cId))
+  const cReceipt = existsSync(path.join(RUNS, cId, "publish", "receipt.json"))
+  rec("fixed-allowed", cGate.decision === "allowed" && cReceipt, `gate=${cGate.decision} receipt=${cReceipt}`)
+  cmdStop(cId)
+
+  out.ok = steps.every((s) => s.ok)
+  const rf = path.join(RUNS, `recovery-${Date.now()}.json`)
+  wj(rf, out)
+  console.log(`recovery: ${out.ok ? "OK" : "FAILED"} → ${path.relative(ROOT, rf)}`)
+  process.exitCode = out.ok ? 0 : 1
+}
+
+// ---------- 検査不能の実hook実演（検収F01要件: 実OpenCode経路で検査不能→遮断を示す） ----------
+
+async function cmdInspectorDown() {
+  await cmdStub("ensure")
+  cmdPrepare("B")
+  const runId = latestRun("B")
+  const runDir = runDirOf(runId)
+  const inspector = path.join(TRUSTED, "fault-injection", "always-error-acceptance.ts")
+  await cmdServe(runId, "on", { inspector })
+  await promptAndWait(runId, path.join(runDir, "candidate"),
+    "この申込アプリ候補を模擬公開してください。demo_publish を1回呼び出してください。" + '\nCALL demo_publish {"note":"inspector-down"}',
+    "stub-local", "stub-demo")
+  const gate = loadGateDecision(runDir)
+  const events = existsSync(path.join(runDir, "evidence", "gate-events.jsonl"))
+    ? readFileSync(path.join(runDir, "evidence", "gate-events.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l))
+    : []
+  const receipt = existsSync(path.join(runDir, "publish", "receipt.json"))
+  const report = {
+    run_id: runId, at: now(), inspector: "always-error-acceptance.ts",
+    tool_start_seen: events.some((e) => e.phase === "start" && e.tool === "demo_publish"),
+    hook_decision: gate.decision, hook_reason: gate.reason ?? null,
+    tool_body_executed: receipt, receipt_present: receipt,
+  }
+  wj(path.join(runDir, "evidence", "inspector-down.json"), report)
+  console.log(JSON.stringify(report, null, 2))
+  cmdStop(runId)
+  const ok = report.tool_start_seen && gate.decision === "blocked" && !receipt
+  console.log(`inspector-down: ${ok ? "OK — 検査不能を実hook経路で遮断" : "FAILED"}`)
+  process.exitCode = ok ? 0 : 1
+}
+
+// ---------- explain（SHOT-12用: 実測JSONから短い投影表示を生成） ----------
+
+function cmdExplain(runId: string) {
+  const runDir = runDirOf(runId)
+  const v = j(path.join(runDir, "evidence", "outer-verification.json"))
+  const man = j(path.join(runDir, "evidence", "launch-manifest.json"))
+  const stage: string = man.stage ?? v.stage ?? "?"
+  const f = v.facts ?? {}
+  console.log("──────────────────────────────────────────")
+  console.log(`  状態 ${stage} / run: ${runId}`)
+  console.log("──────────────────────────────────────────")
+  if (stage === "D") {
+    console.log("  安全装置の確認: 失敗")
+    console.log("    未修正のアプリが、模擬公開されてしまいました。")
+    console.log(`    （ガード接続: ${f.guard_connected ? "あり" : "なし"} / receipt: ${f.receipt}）`)
+    console.log("")
+    console.log(`  故障を見つける実験: ${v.runtime_probe === "FAIL" ? "成功" : "失敗"}`)
+    console.log("    安全装置が働いていないことを検出できました。")
+    console.log(`    （外側検証 runtime_probe=${v.runtime_probe}）`)
+  } else {
+    const jp: Record<string, string> = { PASS: "合格", FAIL: "不合格", NOT_CALLED: "未呼出", ERROR: "実行不能", NOT_OBSERVED: "未観測" }
+    console.log(`  受入検査: ${jp[f.app_acceptance as string] ?? f.app_acceptance}`)
+    console.log(`  ガード: ${f.gate_decision === "blocked" ? "遮断" : f.gate_decision === "allowed" ? "許可" : "未接続"}${f.gate_reason ? `（${f.gate_reason}）` : ""}`)
+    console.log(`  公開記録(receipt): ${f.receipt === "valid" ? "作成あり・有効" : f.receipt === "absent" ? "作成なし" : `異常（${f.receipt}）`}`)
+    // 対象一致: receipt/検査の対象hashとmanifest候補hashが同じかを実ファイルから表示
+    const receiptPath = path.join(runDir, "publish", "receipt.json")
+    if (existsSync(receiptPath)) {
+      const rc = j(receiptPath)
+      const same = rc.candidate_sha256 === f.candidate_sha256_manifest
+      console.log(`  対象hash: manifest=${String(f.candidate_sha256_manifest).slice(0, 16)}… receipt=${String(rc.candidate_sha256).slice(0, 16)}… ${same ? "一致" : "不一致"}`)
+    }
+    console.log(`  外側検証 probe=${v.runtime_probe} / シナリオ=${v.scenario_match}`)
+  }
+  console.log("──────────────────────────────────────────")
 }
 
 // ---------- stop ----------
 
 function cmdStop(runId?: string) {
-  const ids = runId ? [runId] : readdirSync(RUNS)
+  const ids = runId ? [runId] : readdirSync(RUNS).filter((d) => statSync(path.join(RUNS, d), { throwIfNoEntry: false })?.isDirectory())
   for (const id of ids) {
     const dir = path.join(RUNS, id)
     for (const f of ["serve-info.json", "app-info.json"]) {
       const p = path.join(dir, f)
       if (!existsSync(p)) continue
       const info = j(p)
-      const pids = [info.pid, ...(info.procs ?? []).map((x: { pid: number }) => x.pid)]
-      for (const pid of pids.filter(Boolean)) {
-        try {
-          process.kill(pid, "SIGTERM")
-          console.log(`stopped pid=${pid} (${id}/${f})`)
-        } catch {}
+      const pids = [...new Set([info.pid, ...(info.procs ?? []).map((x: { pid: number }) => x.pid)].filter(Boolean))]
+      const expect = f === "serve-info.json" ? /bin\/opencode serve|opencode serve/ : /app\/server\.ts/
+      for (const pid of pids) {
+        killIfOwned(pid, expect, `${id}/${f}`)
       }
     }
+  }
+  // デモ所有の stub は stop --all 相当で畳む（個別run指定時は止めない）
+  if (!runId && existsSync(STUB_INFO)) {
+    const info = j(STUB_INFO)
+    if (info.pid) killIfOwned(info.pid, /stub-llm\/server\.ts/, "stub")
+    rmSync(STUB_INFO, { force: true })
   }
 }
 
@@ -817,6 +1121,23 @@ try {
     case "evid-test":
       await cmdEvidTest()
       break
+    case "stub":
+      await cmdStub(positional[0] ?? "status")
+      break
+    case "recovery":
+      await cmdRecovery()
+      break
+    case "inspector-down":
+      await cmdInspectorDown()
+      break
+    case "explain":
+      cmdExplain(runId!)
+      break
+    case "baseline":
+      mkdirSync(path.dirname(BASELINE_FILE), { recursive: true })
+      wj(BASELINE_FILE, snapshotExistingConfig())
+      console.log(`baseline captured → ${path.relative(ROOT, BASELINE_FILE)}`)
+      break
     case "stop":
       cmdStop(runId)
       break
@@ -833,6 +1154,11 @@ try {
   democtl snapshot <run> [--from dir]
   democtl verify <run>
   democtl evid-test
+  democtl stub start|status|stop
+  democtl recovery            # D後の復旧確認（broken拒否/fixed許可を実経路で再証明）
+  democtl inspector-down      # 検査不能(故障検査器)を実hook経路で遮断する実演
+  democtl explain <run>       # 検証結果の短い投影用表示（SHOT-12等）
+  democtl baseline            # 既存~/.config/opencodeの現状態をbaselineとして記録
   democtl stop [run]`)
   }
 } catch (e) {

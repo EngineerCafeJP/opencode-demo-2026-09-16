@@ -2,7 +2,7 @@
   "document_kind": "measurement",
   "schema_version": 1,
   "status": "VERIFIED",
-  "recorded_at": "2026-09-16T11:55:00+09:00",
+  "recorded_at": "2026-09-16T05:27:02.786Z",
   "opencode": {
     "upstream_url": "https://github.com/anomalyco/opencode",
     "tag": "v1.18.31",
@@ -18,16 +18,21 @@
     "architecture": "arm64",
     "runtime_name": "node",
     "runtime_version": "v24.17.0",
-    "isolation_mode": "OPENCODE_TEST_HOME + XDG_* + OPENCODE_CONFIG_DIR 専用分離。share=disabled, autoupdate=false, enabled_providers allowlist, OPENCODE_DISABLE_* で既定機能を遮断",
+    "isolation_mode": "OPENCODE_TEST_HOME + XDG_* + OPENCODE_CONFIG_DIR 専用分離 + 子プロセス環境変数allowlist（親process.envを継承しない）。share=disabled, autoupdate=false, enabled_providers allowlist, OPENCODE_DISABLE_* で既定機能を遮断",
     "effective_config_summary_path": "profiles/on|opencode.json 等 (source/profiles/)",
     "managed_policy_checked": "N/A (組織管理ポリシー非適用の個人端末)",
     "existing_aidd_changed": false,
-    "existing_aidd_evidence": "~/.config/opencode mtime=2026-07-13T02:00:49.123Z 不変（doctor記録）"
+    "existing_aidd_evidence": "~/.config/opencode baseline manifest比較: 1138ファイル同一（trusted/baseline/existing-config.json とのsha256照合・mtime表示ではない）",
+    "child_env_allowlist": "doctorが合成マーカー4個を注入して漏洩なしを実測（12 vars allowlisted）"
   },
   "model": {
     "provider_id": "ollama-local / stub-local",
-    "primary_model_id": "gemma4:e2b (Ollama実ローカルモデル。実修復セッションC-2026-09-16_02-02-27で検証)",
-    "auxiliary_model_id": "gemma4:31b (修復収束検証), stub-demo (決定的フォールバック。撮影・反復実行で使用)",
+    "model_default": "ollama-local/gemma4:e2b（既定メタ。実使用はsession証拠のmodel欄を参照）",
+    "models_used_in_evidence": [
+      "stub-local/stub-demo（撮影・反復デモの全session）",
+      "ollama-local/gemma4:31b（実モデル修復: evidence/runs/C-2026-09-16_02-02-27）",
+      "ollama-local/gemma4:e2b（同run内の未収束試行）"
+    ],
     "credential_reference_name_only": null,
     "usage_approval_reference": "外部送信なし。ローカルモデル/スタブのみ"
   },
@@ -41,10 +46,11 @@
     "broken_source_sha256": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
     "fixed_source_sha256": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
     "acceptance_sha256": "82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828",
-    "guard_sha256": "0b3f51e21d076fffbde16977f9e98f876637453e363cace9d634b2fbe6d7954d",
-    "publish_tool_sha256": "5c944bcd1ba0dc2c41df41e36e56e4095aac2cb91a934a831449290c3e8c0650",
-    "check_tool_sha256": "81ba98e3a4dfbee40a9dcf2843845013ce2ab38b28dd3bad803cdaa237be7b58",
-    "stub_llm_sha256": "6a88ee959dfaf531984129c80985688723dd951cfe6f48bb502112d6a8615f95"
+    "guard_sha256": "182cd88918e70dd1b3759d64fc4a6fd699d9d9ca8bd7d1d09c55d5d1299d9b13",
+    "publish_tool_sha256": "b89697f13df0ed0de792a96866c6d7f9dcfcbf9651c007ce7e2a888e5215795e",
+    "check_tool_sha256": "d309c4d4dd5f16ca98640874b259567472a46eefb1ee7f00d55829c51dd357cc",
+    "stub_llm_sha256": "9cdd47fe856a82e0bb415a6e2580155c33d4fe391acf8c009d4fe4708016c5f5",
+    "verify_core_sha256": "cbca7260abbb265c095cb0fadcb1cb203b13887d1a1399de3a854448f34be049"
   },
   "capture": {
     "browser_viewport": {
@@ -56,9 +62,9 @@
     "terminal_capture_method": "Terminal.app実窓 + screencapture -l<CGWindowID> (optionAll列挙)"
   },
   "verification": {
-    "last_verified_at": "2026-09-16T03:05:00Z",
+    "last_verified_at": "2026-09-16T05:27:02.787Z",
     "test_report_path": "docs/TEST_REPORT.md",
     "presenter_review": "PENDING",
-    "note": "全4 capture run再検証 PASS。gate-events startエントリを呼出し証拠に追加するverifier修正を反映"
+    "note": "R2: F01-F10対応版。guard厳格化(15/15)・verify-core共有化(実CLI exit≠0)・子環境allowlist・fault注入10件blocked+陽性allowed・撮影run4/4 scenario PASS・recovery検証済み"
   }
 }
