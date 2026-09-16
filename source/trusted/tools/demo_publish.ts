@@ -107,9 +107,10 @@ export default {
     }
     writeFileSync(receiptPath, JSON.stringify(receipt, null, 2) + "\n")
 
+    const demoRoot = path.resolve(runDir, "..", "..")
     return {
       title: "模擬公開記録を作成",
-      output: `receipt 作成: ${receiptPath}\ncandidate_sha256=${actual}`,
+      output: `receipt 作成: ${path.relative(demoRoot, receiptPath)}\ncandidate_sha256=${actual.slice(0, 24)}…`,
       metadata: { receipt: receiptPath, candidate_sha256: actual },
     }
   },

@@ -1,0 +1,2 @@
+{"gate":"demo-gate","at":"2026-09-16T04:52:19.602Z","phase":"start","attempt":"s","tool":"demo_publish","session_id":"synthetic","call_id":"synthetic"}
+{"gate":"demo-gate","at":"2026-09-16T04:52:19.602Z","phase":"decision","attempt":"s","decision":"blocked","reason":"synthetic","candidate_sha256":"667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e"}

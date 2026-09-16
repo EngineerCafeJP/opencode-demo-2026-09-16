@@ -1,30 +1,46 @@
 {
-  "generated_at": "2026-09-16T03:02:55.551Z",
-  "note": "全runのouter-verification.json実測を索引。verified=nullは未検証/NOT_CALLED試行",
+  "generated_at": "2026-09-16T05:17:17.431Z",
+  "note": "全runを索引。included_in_delivery=falseは納品ツリー未収録（runs/原本に残存）。models_usedはsession証拠由来。verified=nullは未検証/初期探索試行",
+  "totals": {
+    "trials": 47,
+    "included": 23,
+    "scenario_pass": 28,
+    "real_model_sessions": 2
+  },
   "trials": [
+    {
+      "run_id": ".stub-info.json",
+      "stage": ".",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": ".stub.log",
+      "stage": ".",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [],
+      "receipt": false
+    },
     {
       "run_id": "A-2026-09-16_02-00-23",
       "stage": "A",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
       "verified": {
-        "run_id": "A-2026-09-16_02-00-23",
-        "stage": "A",
         "verified_at": "2026-09-16T02:00:53.600Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/A-2026-09-16_02-00-23/evidence/acceptance-verify-1789524052983.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "blocked",
-          "gate_reason": "ACCEPTANCE_FAIL: 受入検査が合格でない",
-          "receipt": "absent",
-          "guard_connected": true
-        },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f580e451bffeMBmY0P711LNVXy.json"
@@ -34,93 +50,118 @@
     {
       "run_id": "A-2026-09-16_02-16-17",
       "stage": "A",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
       "verified": {
-        "run_id": "A-2026-09-16_02-16-17",
-        "stage": "A",
         "verified_at": "2026-09-16T02:16:29.069Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/A-2026-09-16_02-16-17/evidence/acceptance-verify-1789524988446.json",
-          "tool_called_demo_publish": false,
-          "tool_called_demo_check": true,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "absent",
-          "guard_connected": true
-        },
         "runtime_probe": "NOT_CALLED",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f57ffb435ffehCVr3uAMLCMlK0.json"
       ],
-      "tool_trace": 1,
       "receipt": false
     },
     {
       "run_id": "A-2026-09-16_02-18-27",
       "stage": "A",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "A-2026-09-16_02-18-27",
-        "stage": "A",
         "verified_at": "2026-09-16T02:18:37.929Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/A-2026-09-16_02-18-27/evidence/acceptance-verify-1789525117303.json",
-          "tool_called_demo_publish": false,
-          "tool_called_demo_check": true,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "absent",
-          "guard_connected": true
-        },
         "runtime_probe": "NOT_CALLED",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f57fdbce7ffezH67N3MkN40aKh.json"
       ],
-      "tool_trace": 2,
       "receipt": false
     },
     {
       "run_id": "A-2026-09-16_02-48-40",
       "stage": "A",
+      "classification": "superseded-capture(旧撮影・再撮影で置換)",
+      "models_used": [],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "A-2026-09-16_02-48-40",
-        "stage": "A",
         "verified_at": "2026-09-16T03:01:32.878Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/A-2026-09-16_02-48-40/evidence/acceptance-verify-1789527692260.json",
-          "tool_called_demo_publish": false,
-          "tool_called_demo_check": true,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "absent",
-          "guard_connected": true
-        },
         "runtime_probe": "NOT_CALLED",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
-      "tool_trace": 1,
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "A-2026-09-16_04-50-11",
+      "stage": "A",
+      "classification": "stage-verify(R2)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T04:50:20.027Z",
+        "runtime_probe": "NOT_CALLED",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f5772ed1dffe4SmzgBt90VMN5o.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "A-2026-09-16_05-02-16",
+      "stage": "A",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [
+        "session-ses_f57646ed8ffeQEY2j79mcB9x6L.json",
+        "session-ses_f5767a414ffeiyyey5XDAWLWkU.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "A-2026-09-16_05-10-19",
+      "stage": "A",
+      "classification": "capture(投影素材・R2)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T05:13:07.301Z",
+        "runtime_probe": "NOT_CALLED",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f575e0e99ffeab0d0xDgZnYQkS.json",
+        "session-ses_f57604a72ffeqay7iddjPpTQh5.json"
+      ],
       "receipt": false
     },
     {
       "run_id": "B-2026-09-16_02-00-58",
       "stage": "B",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "gemma4:e2b"
+      ],
+      "included_in_delivery": false,
       "verified": null,
       "sessions": [
         "session-ses_f580dc4d7ffeM0pj7ZMYvnqJqa.json"
@@ -130,26 +171,16 @@
     {
       "run_id": "B-2026-09-16_02-16-45",
       "stage": "B",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
       "verified": {
-        "run_id": "B-2026-09-16_02-16-45",
-        "stage": "B",
         "verified_at": "2026-09-16T02:16:53.490Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/B-2026-09-16_02-16-45/evidence/acceptance-verify-1789525012869.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "blocked",
-          "gate_reason": "ACCEPTANCE_FAIL: 受入検査が合格でない",
-          "receipt": "absent",
-          "guard_connected": true
-        },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f57ff548bffeJ9XtWv4AFhuUFy.json"
@@ -159,26 +190,16 @@
     {
       "run_id": "B-2026-09-16_02-18-38",
       "stage": "B",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "B-2026-09-16_02-18-38",
-        "stage": "B",
         "verified_at": "2026-09-16T02:18:45.939Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/B-2026-09-16_02-18-38/evidence/acceptance-verify-1789525125321.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "blocked",
-          "gate_reason": "ACCEPTANCE_FAIL: 受入検査が合格でない",
-          "receipt": "absent",
-          "guard_connected": true
-        },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f57fd9d53ffe5SvuD972X2Et1S.json"
@@ -188,264 +209,564 @@
     {
       "run_id": "B-2026-09-16_02-48-40",
       "stage": "B",
+      "classification": "superseded-capture(旧撮影・再撮影で置換)",
+      "models_used": [],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "B-2026-09-16_02-48-40",
-        "stage": "B",
         "verified_at": "2026-09-16T03:01:33.661Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/B-2026-09-16_02-48-40/evidence/acceptance-verify-1789527693042.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "blocked",
-          "gate_reason": "ACCEPTANCE_FAIL: 受入検査が合格でない",
-          "receipt": "absent",
-          "guard_connected": true
-        },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_04-50-38",
+      "stage": "B",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": {
+        "verified_at": "2026-09-16T04:50:46.290Z",
+        "runtime_probe": "PASS",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f577272ecffeyLFUhWWtzJtgs6.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_04-52-27",
+      "stage": "B",
+      "classification": "stage-verify(R2)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T04:52:37.375Z",
+        "runtime_probe": "PASS",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f5770c171ffeJRzuizf4n98uWS.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_04-53-13",
+      "stage": "B",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [
+        "session-ses_f5770119dffex25mIz3ZR6mb4T.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_04-53-53",
+      "stage": "B",
+      "classification": "recovery(D後のガード復帰検証)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": null,
+      "sessions": [
+        "session-ses_f576f70daffeUplsfq0uSuOtTg.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_05-01-05",
+      "stage": "B",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [
+        "session-ses_f5768dcffffeDgpRrLfuWlChM0.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_05-01-37",
+      "stage": "B",
+      "classification": "inspector-down(実hook経路)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": null,
+      "sessions": [
+        "session-ses_f57686011ffeuLWRB9w7pSqAI3.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_05-02-16",
+      "stage": "B",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": {
+        "verified_at": "2026-09-16T05:02:45.274Z",
+        "runtime_probe": "PASS",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f57677a9affeA6QL6QzSWNuQnR.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "B-2026-09-16_05-10-19",
+      "stage": "B",
+      "classification": "capture(投影素材・R2)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T05:10:47.004Z",
+        "runtime_probe": "PASS",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f57602131fferEV7leW0rU7Jxx.json"
+      ],
       "receipt": false
     },
     {
       "run_id": "C-2026-09-16_02-02-27",
       "stage": "C",
+      "classification": "real-model-repair(ollama-local/gemma4:31b・e2b試行含む)",
+      "models_used": [
+        "stub-demo",
+        "gemma4:31b",
+        "gemma4:e2b"
+      ],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "C-2026-09-16_02-02-27",
-        "stage": "C",
         "verified_at": "2026-09-16T02:14:55.042Z",
-        "facts": {
-          "candidate_sha256_manifest": "42cbfb2ae535055ffb21db375b01695deab3e5e623b0b9d2cfb009e37c2cf9f2",
-          "candidate_sha256_now": "42cbfb2ae535055ffb21db375b01695deab3e5e623b0b9d2cfb009e37c2cf9f2",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "PASS",
-          "acceptance_evidence": "runs/C-2026-09-16_02-02-27/evidence/acceptance-verify-1789524894410.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": true,
-          "gate_decision": "allowed",
-          "gate_reason": "acceptance PASS",
-          "receipt": "valid",
-          "guard_connected": true
-        },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f5801319dffeg10612hNLQv5aj.json",
         "session-ses_f580b130cffep6UfbgpyM08TcZ.json",
         "session-ses_f580c4363ffeXLFCTTQjeyGwkC.json"
       ],
-      "tool_trace": 7,
       "receipt": true
     },
     {
       "run_id": "C-2026-09-16_02-17-45",
       "stage": "C",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
       "verified": {
-        "run_id": "C-2026-09-16_02-17-45",
-        "stage": "C",
         "verified_at": "2026-09-16T02:17:55.984Z",
-        "facts": {
-          "candidate_sha256_manifest": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
-          "candidate_sha256_now": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "PASS",
-          "acceptance_evidence": "runs/C-2026-09-16_02-17-45/evidence/acceptance-verify-1789525075354.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "allowed",
-          "gate_reason": "acceptance PASS",
-          "receipt": "valid",
-          "guard_connected": true
-        },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f57fe60caffewfZlKT0nWlmBne.json"
       ],
-      "tool_trace": 1,
       "receipt": true
     },
     {
       "run_id": "C-2026-09-16_02-18-46",
       "stage": "C",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "C-2026-09-16_02-18-46",
-        "stage": "C",
         "verified_at": "2026-09-16T02:18:54.093Z",
-        "facts": {
-          "candidate_sha256_manifest": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
-          "candidate_sha256_now": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "PASS",
-          "acceptance_evidence": "runs/C-2026-09-16_02-18-46/evidence/acceptance-verify-1789525133467.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "allowed",
-          "gate_reason": "acceptance PASS",
-          "receipt": "valid",
-          "guard_connected": true
-        },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f57fd7d78ffep1oh2vUu0skAxo.json"
       ],
-      "tool_trace": 1,
       "receipt": true
     },
     {
       "run_id": "C-2026-09-16_02-48-41",
       "stage": "C",
+      "classification": "superseded-capture(旧撮影・再撮影で置換)",
+      "models_used": [],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "C-2026-09-16_02-48-41",
-        "stage": "C",
         "verified_at": "2026-09-16T03:01:34.445Z",
-        "facts": {
-          "candidate_sha256_manifest": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
-          "candidate_sha256_now": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "PASS",
-          "acceptance_evidence": "runs/C-2026-09-16_02-48-41/evidence/acceptance-verify-1789527693826.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "allowed",
-          "gate_reason": "acceptance PASS",
-          "receipt": "valid",
-          "guard_connected": true
-        },
         "runtime_probe": "PASS",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
-      "tool_trace": 1,
+      "sessions": [],
+      "receipt": true
+    },
+    {
+      "run_id": "C-2026-09-16_04-52-51",
+      "stage": "C",
+      "classification": "stage-verify(R2)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T04:52:59.619Z",
+        "runtime_probe": "PASS",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f57706a1affehpekB4cb62UEHK.json"
+      ],
+      "receipt": true
+    },
+    {
+      "run_id": "C-2026-09-16_04-53-21",
+      "stage": "C",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [
+        "session-ses_f576ff5ccffeeaJAomBtCIT49y.json"
+      ],
+      "receipt": false
+    },
+    {
+      "run_id": "C-2026-09-16_04-54-02",
+      "stage": "C",
+      "classification": "recovery(D後のガード復帰検証)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": null,
+      "sessions": [
+        "session-ses_f576f52a1ffe4kuF3X7vyrOf5x.json"
+      ],
+      "receipt": true
+    },
+    {
+      "run_id": "C-2026-09-16_05-02-16",
+      "stage": "C",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": {
+        "verified_at": "2026-09-16T05:03:06.732Z",
+        "runtime_probe": "PASS",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f576726b3ffetAV6AV7BWbpvWo.json"
+      ],
+      "receipt": true
+    },
+    {
+      "run_id": "C-2026-09-16_05-10-20",
+      "stage": "C",
+      "classification": "capture(投影素材・R2)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T05:11:07.391Z",
+        "runtime_probe": "PASS",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f575fd14bffee3wx1gwe9nLIu6.json"
+      ],
       "receipt": true
     },
     {
       "run_id": "D-2026-09-16_02-01-17",
       "stage": "D",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
       "verified": {
-        "run_id": "D-2026-09-16_02-01-17",
-        "stage": "D",
         "verified_at": "2026-09-16T02:01:31.761Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/D-2026-09-16_02-01-17/evidence/acceptance-verify-1789524091129.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "valid",
-          "guard_connected": false
-        },
         "runtime_probe": "FAIL",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f580d9026ffedz19y477mR83T6.json"
       ],
-      "tool_trace": 1,
       "receipt": true
     },
     {
       "run_id": "D-2026-09-16_02-17-10",
       "stage": "D",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
       "verified": {
-        "run_id": "D-2026-09-16_02-17-10",
-        "stage": "D",
         "verified_at": "2026-09-16T02:17:18.562Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/D-2026-09-16_02-17-10/evidence/acceptance-verify-1789525037936.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "valid",
-          "guard_connected": false
-        },
         "runtime_probe": "FAIL",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f57ff059bffethCsqDeILBt5M5.json"
       ],
-      "tool_trace": 1,
       "receipt": true
     },
     {
       "run_id": "D-2026-09-16_02-18-54",
       "stage": "D",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "D-2026-09-16_02-18-54",
-        "stage": "D",
         "verified_at": "2026-09-16T02:19:01.184Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/D-2026-09-16_02-18-54/evidence/acceptance-verify-1789525140562.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "valid",
-          "guard_connected": false
-        },
         "runtime_probe": "FAIL",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
       "sessions": [
         "session-ses_f57fd71a4ffe3jefnbyDTOg4T0.json"
       ],
-      "tool_trace": 1,
       "receipt": true
     },
     {
       "run_id": "D-2026-09-16_02-48-41",
       "stage": "D",
+      "classification": "superseded-capture(旧撮影・再撮影で置換)",
+      "models_used": [],
+      "included_in_delivery": true,
       "verified": {
-        "run_id": "D-2026-09-16_02-48-41",
-        "stage": "D",
         "verified_at": "2026-09-16T03:01:35.232Z",
-        "facts": {
-          "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
-          "hash_invariant": true,
-          "unit_tests": "PASS",
-          "app_acceptance": "FAIL",
-          "acceptance_evidence": "runs/D-2026-09-16_02-48-41/evidence/acceptance-verify-1789527694615.json",
-          "tool_called_demo_publish": true,
-          "tool_called_demo_check": false,
-          "gate_decision": "none",
-          "gate_reason": null,
-          "receipt": "valid",
-          "guard_connected": false
-        },
         "runtime_probe": "FAIL",
-        "scenario_match": "PASS"
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
       },
-      "tool_trace": 1,
+      "sessions": [],
       "receipt": true
+    },
+    {
+      "run_id": "D-2026-09-16_04-53-06",
+      "stage": "D",
+      "classification": "stage-verify(R2)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T04:53:13.969Z",
+        "runtime_probe": "FAIL",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f577043d6ffeunOqACsL7Xll4n.json"
+      ],
+      "receipt": true
+    },
+    {
+      "run_id": "D-2026-09-16_05-02-17",
+      "stage": "D",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": {
+        "verified_at": "2026-09-16T05:03:29.726Z",
+        "runtime_probe": "FAIL",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f5764599dffeSku6651bSpypK0.json",
+        "session-ses_f5766efdcffe9X18TYPglVAhNc.json"
+      ],
+      "receipt": true
+    },
+    {
+      "run_id": "D-2026-09-16_05-06-51",
+      "stage": "D",
+      "classification": "exploratory(初期探索・superseded)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": false,
+      "verified": {
+        "verified_at": "2026-09-16T05:07:27.352Z",
+        "runtime_probe": "FAIL",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f57635046ffeVCeoyKkk5F0BUc.json"
+      ],
+      "receipt": true
+    },
+    {
+      "run_id": "D-2026-09-16_05-10-20",
+      "stage": "D",
+      "classification": "capture(投影素材・R2)",
+      "models_used": [
+        "stub-demo"
+      ],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T05:11:29.964Z",
+        "runtime_probe": "FAIL",
+        "scenario_match": "PASS",
+        "intended_fault_detected": null
+      },
+      "sessions": [
+        "session-ses_f575f9a6dffeQ5IrDDiVLt3xuH.json"
+      ],
+      "receipt": true
+    },
+    {
+      "run_id": "evid-1789524107202",
+      "stage": "e",
+      "classification": "evid-test(実CLI verify回帰)",
+      "models_used": [],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "evid-1789524132334",
+      "stage": "e",
+      "classification": "evid-test(実CLI verify回帰)",
+      "models_used": [],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "evid-1789527664893",
+      "stage": "e",
+      "classification": "evid-test(実CLI verify回帰)",
+      "models_used": [],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "evid-1789534104436",
+      "stage": "e",
+      "classification": "evid-test(実CLI verify回帰)",
+      "models_used": [],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "evid-1789534145572",
+      "stage": "e",
+      "classification": "evid-test(実CLI verify回帰)",
+      "models_used": [],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "evid-1789534188233",
+      "stage": "e",
+      "classification": "evid-test(実CLI verify回帰)",
+      "models_used": [],
+      "included_in_delivery": false,
+      "verified": null,
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "fault-r1-a-no-evidence",
+      "stage": "f",
+      "classification": "fault-probe(合成異常系)",
+      "models_used": [],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T04:52:21.189Z",
+        "runtime_probe": "NOT_CALLED",
+        "scenario_match": "FAIL",
+        "intended_fault_detected": null
+      },
+      "sessions": [],
+      "receipt": false
+    },
+    {
+      "run_id": "fault-r1-b-foreign-receipt",
+      "stage": "f",
+      "classification": "fault-probe(合成異常系)",
+      "models_used": [],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T04:52:19.591Z",
+        "runtime_probe": "FAIL",
+        "scenario_match": "FAIL",
+        "intended_fault_detected": null
+      },
+      "sessions": [],
+      "receipt": true
+    },
+    {
+      "run_id": "fault-r1-b-hash-mismatch",
+      "stage": "f",
+      "classification": "fault-probe(合成異常系)",
+      "models_used": [],
+      "included_in_delivery": true,
+      "verified": {
+        "verified_at": "2026-09-16T04:52:20.392Z",
+        "runtime_probe": "PASS",
+        "scenario_match": "FAIL",
+        "intended_fault_detected": null
+      },
+      "sessions": [],
+      "receipt": false
     }
   ]
 }

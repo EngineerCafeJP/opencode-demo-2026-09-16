@@ -1,0 +1,16 @@
+{
+  "at": "2026-09-16T04:53:53.873Z",
+  "steps": [
+    {
+      "name": "broken-rejected",
+      "ok": true,
+      "detail": "gate=blocked receipt=false"
+    },
+    {
+      "name": "fixed-allowed",
+      "ok": true,
+      "detail": "gate=allowed receipt=true"
+    }
+  ],
+  "ok": true
+}

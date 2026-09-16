@@ -1,0 +1,12 @@
+{
+  "tool": "demo_publish",
+  "kind": "local-mock-publish-receipt",
+  "run_id": "C-2026-09-16_02-02-27",
+  "candidate_sha256": "42cbfb2ae535055ffb21db375b01695deab3e5e623b0b9d2cfb009e37c2cf9f2",
+  "manifest_sha256": "16c960ba77421da11b53e785f359b73f328a86118b48feb4af143db5d9afb198",
+  "session_id": "ses_f5801319dffeg10612hNLQv5aj",
+  "call_id": "call_4gamvtdt",
+  "published_at": "2026-09-16T02:14:50.686Z",
+  "note": "stage-C fixed",
+  "disclaimer": "教材用のローカル記録。実サービスへの公開ではない。"
+}

@@ -60,7 +60,8 @@ function decide(messages: { role: string; content: unknown }[], tools: { functio
     | undefined
   const out = toolText(lastTool?.content).trim()
   const body = out ? out.slice(0, 1400) : "(tool output empty)"
-  return { content: `ツールの実測結果をそのまま報告します:\n\n${body}` }
+  // フェンスで囲み、実測値の改行がUIで潰れないようにする（内容は加工しない）
+  return { content: `ツールの実測結果をそのまま報告します（固定応答プロバイダ）:\n\n\`\`\`\n${body}\n\`\`\`` }
 }
 
 const server = createServer((req, res) => {

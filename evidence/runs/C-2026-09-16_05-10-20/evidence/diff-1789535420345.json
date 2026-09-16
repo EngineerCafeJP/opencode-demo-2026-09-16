@@ -1,0 +1,11 @@
+{
+  "run_id": "C-2026-09-16_05-10-20",
+  "at": "2026-09-16T05:10:20.345Z",
+  "from": "<DEMO_ROOT>/workspace/registration-demo",
+  "changed_lines": 1,
+  "changed_files": [
+    "<DEMO_ROOT>/runs/C-2026-09-16_05-10-20/candidate/app/server.ts "
+  ],
+  "all_under_app": true,
+  "candidate_sha256": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1"
+}

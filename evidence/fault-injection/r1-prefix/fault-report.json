@@ -1,0 +1,95 @@
+{
+  "mode": "observe",
+  "at": "2026-09-16T04:35:25.218Z",
+  "note": "全入力は合成。実モデル・外部通信なし",
+  "results": [
+    {
+      "id": "gate/missing-required-cases",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "reason=acceptance PASS"
+    },
+    {
+      "id": "gate/aggregate-pass-with-failing-case",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "reason=acceptance PASS"
+    },
+    {
+      "id": "gate/case-element-null",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "reason=acceptance PASS"
+    },
+    {
+      "id": "gate/duplicate-case",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "reason=acceptance PASS"
+    },
+    {
+      "id": "gate/exit-nonzero-after-pass-doc",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "reason=acceptance PASS"
+    },
+    {
+      "id": "gate/inspector-timeout",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "reason=acceptance PASS"
+    },
+    {
+      "id": "gate/valid-full-pass",
+      "want": "ALLOW",
+      "got": "ALLOW",
+      "pass": true,
+      "match": true,
+      "detail": "reason=acceptance PASS"
+    },
+    {
+      "id": "hook/nonzero-exit-after-pass-document",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "threw=false decision=allowed exit_seen=3"
+    },
+    {
+      "id": "cli/b-foreign-receipt",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "exit=0 probe=FAIL scenario=PASS"
+    },
+    {
+      "id": "cli/b-hash-mismatch",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "exit=0 invariant=false scenario=PASS"
+    },
+    {
+      "id": "cli/a-no-tool-evidence",
+      "want": "BLOCK",
+      "got": "ALLOW",
+      "pass": true,
+      "match": false,
+      "detail": "exit=0 check_called=false scenario=PASS"
+    }
+  ]
+}

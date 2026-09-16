@@ -1,0 +1,18 @@
+{
+  "tool": "acceptance",
+  "case": "both",
+  "verdict": "ERROR",
+  "target": "<DEMO_ROOT>/runs/evid-1789534188233/t02/candidate",
+  "target_sha256": "9048040d7c265e623501597a73bcb7cec59f17ea0023931e24e9f603e959cef3",
+  "state_dir": "<DEMO_ROOT>/runs/evid-1789534188233/t02/runtime/acc-both-1789534188391",
+  "started_at": "2026-09-16T04:49:48.391Z",
+  "finished_at": "2026-09-16T04:49:48.421Z",
+  "cases": [
+    {
+      "case_id": "app-00",
+      "expected": "対象サーバーが起動する",
+      "actual": "Error: server exited early code=1 log=t resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)\n    at Module._load (node:internal/modules/cjs/loader:1285:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: []\n}\n\nNode.js v24.17.0\n",
+      "verdict": "ERROR"
+    }
+  ]
+}

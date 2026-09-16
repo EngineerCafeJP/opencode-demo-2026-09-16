@@ -1,0 +1,27 @@
+{
+  "run_id": "B-2026-09-16_05-10-19",
+  "stage": "B",
+  "verified_at": "2026-09-16T05:10:47.004Z",
+  "facts": {
+    "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "hash_invariant": true,
+    "unit_tests": "PASS",
+    "app_acceptance": "FAIL",
+    "acceptance_evidence": "runs/B-2026-09-16_05-10-19/evidence/acceptance-verify-1789535446382.json",
+    "tool_called_demo_publish": true,
+    "tool_called_demo_check": false,
+    "gate_decision": "blocked",
+    "gate_reason": "ACCEPTANCE_FAIL: 個別検査不合格 app-03,app-04",
+    "receipt": "absent",
+    "guard_connected": true,
+    "session_models_used": [
+      "stub-local/stub-demo"
+    ],
+    "default_model_in_manifest": "ollama-local/gemma4:e2b"
+  },
+  "violations": [],
+  "runtime_probe": "PASS",
+  "intended_fault_detected": false,
+  "scenario_match": "PASS"
+}

@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_f57602131fferEV7leW0rU7Jxx",
+  "run_id": "B-2026-09-16_05-10-19",
+  "directory": "<DEMO_ROOT>/runs/B-2026-09-16_05-10-19/candidate",
+  "provider": "stub-local",
+  "model": "stub-demo",
+  "prompt": "これは講義用のローカル模擬公開です。実サービスへの公開ではありません。\n現在の固定コピーに対してdemo_publishを1回だけ呼んでください。アプリも検査も修正しないでください。\n拒否されたら別経路を使わず、ツールが返した理由をそのまま報告してください。\nCALL demo_publish {\"note\":\"shot-06\"}",
+  "sent_at": "2026-09-16T05:10:46.204Z",
+  "http_status": 200,
+  "tool_calls": [
+    {
+      "tool": "demo_publish",
+      "callID": "call_delpzby9",
+      "status": "error",
+      "input": {
+        "note": "shot-06"
+      },
+      "error": "demo-gate: ACCEPTANCE_FAIL: 個別検査不合格 app-03,app-04 — demo_publish は本体未実行で遮断されました（receiptは作成されていません）"
+    }
+  ],
+  "reply_head": "これは講義用のローカル模擬公開です。実サービスへの公開ではありません。\n現在の固定コピーに対してdemo_publishを1回だけ呼んでください。アプリも検査も修正しないでください。\n拒否されたら別経路を使わず、ツールが返した理由をそのまま報告してください。\nCALL demo_publish {\"note\":\"shot-06\"}\nツールの実測結果をそのまま報告します（固定応答プロバイダ）:\n\n```\ndemo-gate: ACCEPTANCE_FAIL: 個別検査不合格 app-03,app-04 — demo_publish は本体未実行で遮断されました（receiptは作成されていません）\n```",
+  "captured_for": "SHOT-06"
+}

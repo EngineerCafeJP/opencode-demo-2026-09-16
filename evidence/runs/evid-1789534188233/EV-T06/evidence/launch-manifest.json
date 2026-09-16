@@ -1,0 +1,16 @@
+{
+  "run_id": "EV-T06",
+  "stage": "B",
+  "candidate_sha256": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+  "guard_connected": true,
+  "tool_dir": "trusted/tools",
+  "model_default": {
+    "provider": "stub-local",
+    "id": "stub-demo"
+  },
+  "model": {
+    "provider": "stub-local",
+    "id": "stub-demo"
+  },
+  "launched_at": "2026-09-16T04:49:50.791Z"
+}
