@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>OpenCodeデモ教材 — 素材一覧</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: -apple-system, "Hiragino Sans", sans-serif; background: #14161c; color: #e6e8ee; margin: 0; padding: 32px 40px; }
+  h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 36px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+  .note { background: #2b2416; border: 1px solid #6b5a2e; color: #e8d9a0; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin: 14px 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 18px; }
+  .card { background: #1b1e26; border: 1px solid #2c303c; border-radius: 10px; padding: 12px; }
+  .card img { width: 100%; border-radius: 6px; border: 1px solid #333; display: block; }
+  .card h3 { margin: 8px 0 4px; font-size: 15px; }
+  .card p { margin: 4px 0; font-size: 12.5px; color: #aab; }
+  .card code { font-size: 11px; color: #8fb8ff; word-break: break-all; }
+  a { color: #8fb8ff; }
+  table { border-collapse: collapse; font-size: 12.5px; }
+  td, th { border: 1px solid #333; padding: 5px 9px; text-align: left; }
+  .pass { color: #7dd99a; } .fail { color: #ff9a9a; }
+</style>
+</head>
+<body>
+<h1>OpenCodeデモ教材 — 素材一覧（ローカル）</h1>
+<div class="note">講座用の合成データ／実サービスへの申込・公開ではありません。全画像は実行時に実機で撮影されたものです（再現画像・架空ログではありません）。</div>
+<p>索引: <a href="SCREENSHOT_INDEX.md">SCREENSHOT_INDEX.md</a> ・ <a href="shot-manifest.json">shot-manifest.json</a> ・ <a href="../demo-lock.json">demo-lock.json</a> ・ <a href="../docs/RUNBOOK.md">RUNBOOK.md</a> ・ <a href="../docs/TEST_REPORT.md">TEST_REPORT.md</a></p>
+
+<h2>状態 A — テストは緑。でも、定員を超えた</h2>
+<div class="grid">
+  <div class="card"><img src="slide-ready/SHOT-01_unit-tests-pass.png"><h3>SHOT-01 部品のテストは、全部通った</h3><p>broken候補の判定関数テスト 4/4合格（実端末・run A-…02-48-40）</p><code>evidence/runs/A-2026-09-16_02-48-40/evidence/</code></div>
+  <div class="card"><img src="slide-ready/SHOT-02_register-9-to-10.png"><h3>SHOT-02 空席があれば、申し込める</h3><p>9名→受付成功・保存人数10（実ブラウザ操作）</p><code>evidence/runs/A-2026-09-16_02-48-40/app-info.json</code></div>
+  <div class="card"><img src="slide-ready/SHOT-03_full-before-click.png"><h3>SHOT-03 では、満席から申し込むと？</h3><p>新subrunで10/10復元・結果は未実施</p><code>evidence/runs/A-2026-09-16_02-48-40/app-info.json</code></div>
+  <div class="card"><img src="slide-ready/SHOT-04_over-capacity.png"><h3>SHOT-04 テストは緑。でも、定員を超えた</h3><p>満席クリック→誤受付11/10（read-back一致）</p><code>evidence/runs/A-2026-09-16_02-48-40/runtime/ui-state.json</code></div>
+  <div class="card"><img src="slide-ready/SHOT-05_opencode-check-measured.png"><h3>SHOT-05 説明ではなく、実際の結果で確かめる</h3><p>実OpenCodeのdemo_check実呼出し→verdict=FAIL・実測10→11を表示（公式Web UI・実backend）</p><code>evidence/runs/A-2026-09-16_02-48-40/evidence/</code></div>
+</div>
+
+<h2>状態 B — 同じ欠陥を、公開する前に止める</h2>
+<div class="grid">
+  <div class="card"><img src="slide-ready/SHOT-06_guard-blocked.png"><h3>SHOT-06 同じ欠陥を、公開する前に止めた</h3><p>demo_publish実呼出し→tool.execute.beforeガードがACCEPTANCE_FAILで遮断・receiptなし</p><code>evidence/runs/B-2026-09-16_02-48-40/evidence/gate-events.jsonl</code></div>
+</div>
+
+<h2>状態 C — アプリだけを直し、同じ検査で進める</h2>
+<div class="grid">
+  <div class="card"><img src="slide-ready/SHOT-07_app-only-diff.png"><h3>SHOT-07 変えたのはアプリ。合格の基準は変えない</h3><p>実差分: app/server.tsのみ変更・検査/ガードhash不変</p><code>evidence/runs/C-2026-09-16_02-48-41/evidence/</code></div>
+  <div class="card"><img src="slide-ready/SHOT-08_full-rejected-10.png"><h3>SHOT-08 満席では拒否し、人数も増えない</h3><p>修復後: 満席クリック→409拒否・保存人数10のまま</p><code>evidence/runs/C-2026-09-16_02-48-41/app-info.json</code></div>
+  <div class="card"><img src="slide-ready/SHOT-09_publish-allowed-receipt.png"><h3>SHOT-09 正しいものは、同じ検査を通って進める</h3><p>同一検査PASS→ガード許可→receipt作成・hash一致</p><code>evidence/runs/C-2026-09-16_02-48-41/publish/receipt.json</code></div>
+</div>
+
+<h2>状態 D — 安全装置自体の接続を試す</h2>
+<div class="grid">
+  <div class="card"><img src="slide-ready/SHOT-10_guard-tests-pass.png"><h3>SHOT-10 安全装置の部品テストも、通ってしまう</h3><p>接続を外してもガード内部テスト 8/8 合格</p><code>source/trusted/guard-source/guard.test.ts</code></div>
+  <div class="card"><img src="slide-ready/SHOT-11_unguarded-publish.png"><h3>SHOT-11 接続がなければ、未修正でも進んでしまった</h3><p>ガード未接続→demo_publish実行→未修正候補にreceipt作成</p><code>evidence/runs/D-2026-09-16_02-48-41/publish/receipt.json</code></div>
+  <div class="card"><img src="slide-ready/SHOT-12_outer-verify-fail.png"><h3>SHOT-12 本当の入口を通すと、装置の故障にも気づける</h3><p>外側runtime_probeが「未修正なのに模擬公開」を検出しFAIL</p><code>evidence/runs/D-2026-09-16_02-48-41/evidence/outer-verification.json</code></div>
+</div>
+
+<h2>検証サマリー（実測・2サイクル）</h2>
+<table>
+<tr><th>run</th><th>単体</th><th>受入</th><th>publish呼出</th><th>gate</th><th>receipt</th><th>probe</th><th>scenario</th></tr>
+<tr><td>A-2026-09-16_02-18-27</td><td class="pass">PASS</td><td class="fail">FAIL</td><td>-</td><td>none</td><td>absent</td><td>NOT_CALLED</td><td class="pass">PASS</td></tr>
+<tr><td>B-2026-09-16_02-18-38</td><td class="pass">PASS</td><td class="fail">FAIL</td><td>true</td><td>blocked</td><td>absent</td><td class="pass">PASS</td><td class="pass">PASS</td></tr>
+<tr><td>C-2026-09-16_02-18-46</td><td class="pass">PASS</td><td class="pass">PASS</td><td>true</td><td>allowed</td><td>valid</td><td class="pass">PASS</td><td class="pass">PASS</td></tr>
+<tr><td>D-2026-09-16_02-18-54</td><td class="pass">PASS</td><td class="fail">FAIL</td><td>true</td><td>none</td><td>valid</td><td class="fail">FAIL</td><td class="pass">PASS</td></tr>
+</table>
+<p>全試行の一覧: <a href="trials-index.json">trials-index.json</a> ・ runごとの実測: <code>evidence/runs/&lt;run-id&gt;/</code></p>
+</body>
+</html>

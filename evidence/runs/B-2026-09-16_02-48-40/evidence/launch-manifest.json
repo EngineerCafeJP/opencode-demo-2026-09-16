@@ -1,0 +1,22 @@
+{
+  "run_id": "B-2026-09-16_02-48-40",
+  "stage": "B",
+  "profile": "on",
+  "created_at": "2026-09-16T02:49:01.881Z",
+  "opencode_version": "1.18.31",
+  "opencode_sha256": "16c960ba77421da11b53e785f359b73f328a86118b48feb4af143db5d9afb198",
+  "opencode_acquisition": "official-distribution-binary",
+  "candidate_dir": "<DEMO_ROOT>/runs/B-2026-09-16_02-48-40/candidate",
+  "candidate_sha256": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+  "acceptance_sha256": "82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828",
+  "guard_sha256": "0b3f51e21d076fffbde16977f9e98f876637453e363cace9d634b2fbe6d7954d",
+  "tools_sha256": {
+    "demo_check.ts": "81ba98e3a4dfbee40a9dcf2843845013ce2ab38b28dd3bad803cdaa237be7b58",
+    "demo_publish.ts": "5c944bcd1ba0dc2c41df41e36e56e4095aac2cb91a934a831449290c3e8c0650"
+  },
+  "guard_connected": true,
+  "model": {
+    "provider": "ollama-local",
+    "id": "gemma4:e2b"
+  }
+}

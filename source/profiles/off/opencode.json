@@ -1,0 +1,81 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "share": "disabled",
+  "autoupdate": false,
+  "enabled_providers": [
+    "ollama-local",
+    "stub-local"
+  ],
+  "model": "ollama-local/gemma4:e2b",
+  "small_model": "ollama-local/gemma4:e2b",
+  "provider": {
+    "ollama-local": {
+      "name": "Ollama local (demo)",
+      "api": "http://127.0.0.1:11434/v1",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "apiKey": "ollama",
+        "baseURL": "http://127.0.0.1:11434/v1",
+        "timeout": 180000
+      },
+      "models": {
+        "gemma4:e2b": {
+          "name": "gemma4:e2b",
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        },
+        "gemma4:31b": {
+          "name": "gemma4:31b",
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        }
+      }
+    },
+    "stub-local": {
+      "name": "Deterministic stub (demo fallback)",
+      "api": "http://127.0.0.1:4531/v1",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "apiKey": "stub",
+        "baseURL": "http://127.0.0.1:4531/v1",
+        "timeout": 30000
+      },
+      "models": {
+        "stub-demo": {
+          "name": "stub-demo",
+          "tool_call": true,
+          "limit": {
+            "context": 32000,
+            "output": 4096
+          }
+        }
+      }
+    }
+  },
+  "permission": {
+    "read": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "edit": "deny",
+    "write": "deny",
+    "bash": "deny",
+    "task": "deny",
+    "skill": "deny",
+    "lsp": "deny",
+    "webfetch": "deny",
+    "websearch": "deny",
+    "external_directory": "deny",
+    "question": "deny",
+    "todowrite": "allow",
+    "doom_loop": "allow",
+    "demo_check": "allow",
+    "demo_publish": "allow"
+  }
+}

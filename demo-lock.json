@@ -1,0 +1,64 @@
+{
+  "document_kind": "measurement",
+  "schema_version": 1,
+  "status": "VERIFIED",
+  "recorded_at": "2026-09-16T11:55:00+09:00",
+  "opencode": {
+    "upstream_url": "https://github.com/anomalyco/opencode",
+    "tag": "v1.18.31",
+    "commit_sha": "014614d35b397775e5d397a490fc72368c894ec2",
+    "display_version": "1.18.31",
+    "binary_sha256": "16c960ba77421da11b53e785f359b73f328a86118b48feb4af143db5d9afb198",
+    "acquisition": "official-distribution-binary (opencode-darwin-arm64.zip, GitHub Releases)",
+    "core_source_modified": false,
+    "clone_path": "upstream/opencode (detached @ 014614d3)"
+  },
+  "environment": {
+    "os": "macOS 26.6.2",
+    "architecture": "arm64",
+    "runtime_name": "node",
+    "runtime_version": "v24.17.0",
+    "isolation_mode": "OPENCODE_TEST_HOME + XDG_* + OPENCODE_CONFIG_DIR 専用分離。share=disabled, autoupdate=false, enabled_providers allowlist, OPENCODE_DISABLE_* で既定機能を遮断",
+    "effective_config_summary_path": "profiles/on|opencode.json 等 (source/profiles/)",
+    "managed_policy_checked": "N/A (組織管理ポリシー非適用の個人端末)",
+    "existing_aidd_changed": false,
+    "existing_aidd_evidence": "~/.config/opencode mtime=2026-07-13T02:00:49.123Z 不変（doctor記録）"
+  },
+  "model": {
+    "provider_id": "ollama-local / stub-local",
+    "primary_model_id": "gemma4:e2b (Ollama実ローカルモデル。実修復セッションC-2026-09-16_02-02-27で検証)",
+    "auxiliary_model_id": "gemma4:31b (修復収束検証), stub-demo (決定的フォールバック。撮影・反復実行で使用)",
+    "credential_reference_name_only": null,
+    "usage_approval_reference": "外部送信なし。ローカルモデル/スタブのみ"
+  },
+  "dependencies": {
+    "lockfile_sha256": null,
+    "plugin_package_version": "opencode同梱 @opencode-ai/plugin (file plugin: export default {id, server})",
+    "playwright_version": "1.57.x (trusted/capture ローカルinstall)",
+    "browser_version": "Chromium 143.0.7499.4 (playwright build 1200, private-runtime/pw-browsers)"
+  },
+  "artifacts": {
+    "broken_source_sha256": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "fixed_source_sha256": "d5851646899e444da53420cce1a2e7ee0ea58e8268392a608bdccb363a4d11f1",
+    "acceptance_sha256": "82894aa976752f9492f0977851d6271c29623a51f4de4671fc237cec048d0828",
+    "guard_sha256": "0b3f51e21d076fffbde16977f9e98f876637453e363cace9d634b2fbe6d7954d",
+    "publish_tool_sha256": "5c944bcd1ba0dc2c41df41e36e56e4095aac2cb91a934a831449290c3e8c0650",
+    "check_tool_sha256": "81ba98e3a4dfbee40a9dcf2843845013ce2ab38b28dd3bad803cdaa237be7b58",
+    "stub_llm_sha256": "6a88ee959dfaf531984129c80985688723dd951cfe6f48bb502112d6a8615f95"
+  },
+  "capture": {
+    "browser_viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "device_scale_factor": 1,
+    "opencode_ui_kind": "official web UI served by fixed opencode serve (route /server/<b64>/session/<id>)",
+    "terminal_capture_method": "Terminal.app実窓 + screencapture -l<CGWindowID> (optionAll列挙)"
+  },
+  "verification": {
+    "last_verified_at": "2026-09-16T03:05:00Z",
+    "test_report_path": "docs/TEST_REPORT.md",
+    "presenter_review": "PENDING",
+    "note": "全4 capture run再検証 PASS。gate-events startエントリを呼出し証拠に追加するverifier修正を反映"
+  }
+}

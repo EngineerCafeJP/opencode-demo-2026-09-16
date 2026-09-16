@@ -1,0 +1,3 @@
+#!/bin/sh
+# democtl — 教材コントローラの入口。DEMO_ROOT 内のみを操作する。
+exec node "$(dirname "$0")/trusted/controller/democtl.ts" "$@"

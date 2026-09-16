@@ -1,0 +1,22 @@
+{
+  "session_id": "ses_f57fdbce7ffezH67N3MkN40aKh",
+  "run_id": "A-2026-09-16_02-18-27",
+  "directory": "<DEMO_ROOT>/runs/A-2026-09-16_02-18-27/candidate",
+  "provider": "stub-local",
+  "model": "stub-demo",
+  "prompt": "この申込アプリの単体テストと実際の受付動作を調べてください。demo_check で unit と both を実行し、単体テストの結果と実受付の結果が一致するか報告してください。\nCALL demo_check {\"case\":\"both\"}",
+  "sent_at": "2026-09-16T02:18:37.203Z",
+  "http_status": 200,
+  "tool_calls": [
+    {
+      "tool": "demo_check",
+      "callID": "call_90gliwbg",
+      "status": "completed",
+      "input": {
+        "case": "both"
+      },
+      "output_head": "[demo_check both] verdict=FAIL\n対象: <DEMO_ROOT>/runs/A-2026-09-16_02-18-27/candidate\napp-01: PASS (GET / → 200, /app.css → 200, /client.js → 200)\napp-02: PASS (HTTP 201, body.count=10, file.count=10)\napp-03: FAIL (HTTP 201, file.count 10→11)\napp-04: FAIL (api.count=11, file.count=11)\n証拠: acceptance-both-call_90gliwbg.json"
+    }
+  ],
+  "reply_head": "ツールの実行結果を確認しました。demo_check の結果と保存人数の読み戻し、および demo_publish の結果をそのまま報告します（固定応答プロバイダ）。"
+}

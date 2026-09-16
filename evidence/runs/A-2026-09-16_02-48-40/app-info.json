@@ -1,0 +1,8 @@
+{
+  "pid": 1505,
+  "port": 51491,
+  "url": "http://127.0.0.1:51491",
+  "fixture": "full",
+  "state_file": "<DEMO_ROOT>/runs/A-2026-09-16_02-48-40/runtime/ui-state.json",
+  "started_at": "2026-09-16T02:48:49.185Z"
+}

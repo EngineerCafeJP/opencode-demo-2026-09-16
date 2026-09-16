@@ -1,0 +1,21 @@
+{
+  "run_id": "D-2026-09-16_02-48-41",
+  "stage": "D",
+  "verified_at": "2026-09-16T03:01:35.232Z",
+  "facts": {
+    "candidate_sha256_manifest": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "candidate_sha256_now": "667e0d4393d9e97d13e0ed947a7814852e0848b9c7da9416def70a012833298e",
+    "hash_invariant": true,
+    "unit_tests": "PASS",
+    "app_acceptance": "FAIL",
+    "acceptance_evidence": "runs/D-2026-09-16_02-48-41/evidence/acceptance-verify-1789527694615.json",
+    "tool_called_demo_publish": true,
+    "tool_called_demo_check": false,
+    "gate_decision": "none",
+    "gate_reason": null,
+    "receipt": "valid",
+    "guard_connected": false
+  },
+  "runtime_probe": "FAIL",
+  "scenario_match": "PASS"
+}
